@@ -7,7 +7,7 @@ import dynamical.fsm.Mealy.asMealy
 import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
 
-class DynamicalSuite extends FunSuite:
+class MonoSuite extends FunSuite:
 
     test("moore"):
       val m: Moore[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = Moore(false, s => i => i + i, (s, i) => s)
@@ -21,7 +21,7 @@ class DynamicalSuite extends FunSuite:
       val expected: List[Int] = List(2, 4, 6)
       assertEquals(obtained, expected)
 
-    test("wrap mono"):
+    test("wrap moore"):
       val l: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
       val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int, _] ~> Monomial[Int, Int => Int, _]] =
         l.wrapped(i => j => j + j, (i1, i2) => i2).asMealy
@@ -29,7 +29,7 @@ class DynamicalSuite extends FunSuite:
       val expected: List[Int] = List(2, 4, 6) 
       assertEquals(obtained, expected)
 
-    test("wrap poly"):
+    test("wrapper"):
       val w: Wrapper[Monomial[Int, Int, _] ~> Monomial[Int, Int => Int, _]] = Wrapper(i => j => j + j, (i1, i2) => i2)
       val l: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
       val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int, _] ~> Monomial[Int, Int => Int, _]] = w.wrap(l).asMealy

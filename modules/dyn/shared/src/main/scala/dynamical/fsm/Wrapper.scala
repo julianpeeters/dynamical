@@ -26,5 +26,7 @@ object Wrapper:
   extension [S, A, B, Y] (p: PolyMap[Monomial[A, B, _], Monomial[A, A => B, _], Y])
     def asWrapper: Wrapper[Monomial[A, B, _] ~> Monomial[A, A => B, _]] =
       new Wrapper[Monomial[A, B, _] ~> Monomial[A, A => B, _]]:
-        def `f₁`[Y]: Readout[Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] = p.φ
-        def `f#`[Y]: Update[Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] = p.`φ#`
+        def `f₁`[Y]: Readout[Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] =
+          p.φ
+        def `f#`[Y]: Update[Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] =
+          p.`φ#`

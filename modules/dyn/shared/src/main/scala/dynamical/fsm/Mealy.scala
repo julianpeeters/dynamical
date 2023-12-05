@@ -1,6 +1,5 @@
 package dynamical.fsm
 
-import polynomial.functor.{Dir, Pos}
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.{Monomial, Store}
 import dynamical.fsm.{Init, Readout, Update}
@@ -9,6 +8,12 @@ trait Mealy[P[_]] extends Moore[P]:
   def run[Y]: Mealy.Run[P, Y]
 
 object Mealy:
+
+  type Run[P[_], Y] = P[Y] match
+    case PolyMap[p, q, Y] => (p[Y], q[Y]) match
+      case (Store[s, Y], Monomial[a, ? => b, Y])                => (s, a) => (s, b)
+      case (Store[s, Y], PolyMap[p, Monomial[a, ? => b, _], Y]) => (s, a) => (s, b)
+      case (PolyMap[Store[s, _], ?, Y], Monomial[a, ? => b, Y]) => (s, a) => (s, b)
 
   def apply[S, A, B, Y](
     i: S,
@@ -55,11 +60,3 @@ object Mealy:
           p.update
         def run[Y]: Run[(Store[S, _]) ~> (Monomial[A, B, _] ~> Monomial[A, A => B, _]), Y] =
           (s, a) => (p.update(s, a), p.readout(s)(a))
-
-
-  type Run[P[_], Y] = P[Y] match
-    case PolyMap[p, q, Y] => (p[Y], q[Y]) match
-      case (Store[s, Y], Monomial[a, ? => b, Y]) => (s, a) => (s, b)
-      case (Store[s, Y], PolyMap[p, Monomial[a, ? => b, _], Y]) => (s, a) => (s, b)
-      case (PolyMap[Store[s, _], ?, Y], Monomial[a, ? => b, Y]) => (s, a) => (s, b)
-      case (PolyMap[Store[s, _], ?, Y], q[Y]) => (s, Dir[q, Y]) => (s, Pos[q, Y])

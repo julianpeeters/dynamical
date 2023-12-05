@@ -32,7 +32,7 @@ lazy val dyn = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "dynamical",
     libraryDependencies ++= Seq(
-      "com.julianpeeters" %%% "polynomial" % "0.0.0+12-daf14635+20231202-2131-SNAPSHOT",
+      "com.julianpeeters" %%% "polynomial" % "0.0.0+13-fd3c99ce+20231204-1819-SNAPSHOT",
     )
   )
 
