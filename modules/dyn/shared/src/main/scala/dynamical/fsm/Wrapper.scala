@@ -1,9 +1,9 @@
 package dynamical.fsm
 
-import polynomial.morphism.{PolyMap, ~>}
-import polynomial.`object`.{Monomial, Store}
 import dynamical.fsm.Moore.asMoore
 import dynamical.fsm.{Readout, Update}
+import polynomial.morphism.{PolyMap, ~>}
+import polynomial.`object`.{Monomial, Store}
 
 trait Wrapper[P[_]]:
   def `f₁`[Y]: Readout[P, Y]
