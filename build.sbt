@@ -27,8 +27,8 @@ inThisBuild(List(
 
 lazy val root = project.in(file(".")).aggregate(tests)
 
-lazy val dyn = crossProject(JSPlatform, JVMPlatform, NativePlatform)
-  .in(file("modules/dyn"))
+lazy val fsm = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .in(file("modules/fsm"))
   .settings(
     name := "dynamical",
     libraryDependencies ++= Seq(
@@ -43,7 +43,7 @@ lazy val tests = project.in(file("modules/tests"))
       "org.scalameta" %% "munit" % "0.7.29" % Test
     )
   )
-  .dependsOn(dyn.jvm)
+  .dependsOn(fsm.jvm)
   .enablePlugins(NoPublishPlugin)
 
 lazy val docs = project.in(file("docs/gitignored"))
@@ -54,6 +54,6 @@ lazy val docs = project.in(file("docs/gitignored"))
       "VERSION" -> version.value.takeWhile(_ != '+'),
     )
   )
-  .dependsOn(dyn.jvm)
+  .dependsOn(fsm.jvm)
   .enablePlugins(MdocPlugin)
   .enablePlugins(NoPublishPlugin)
