@@ -63,6 +63,19 @@ object Moore:
         def update[Y]: Update[Store[S, _] ~> Binomial[A1, B1, A2, B2, _], Y] =
           p.`φ#`
 
+  extension [S, A, B, Y] (p: Moore[Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _]])
+    @scala.annotation.targetName("asMealy3")
+    def asMealy: Mealy[Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _]] =
+      new Mealy[Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _]]:
+        def init[Y]: Init[Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] =
+          p.init
+        def readout[Y]: Readout[Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] =
+          p.readout
+        def update[Y]: Update[(Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _]), Y] =
+          p.update
+        def run[Y]: Run[(Store[S, _]) ~> (Monomial[A, B, _] ~> Monomial[A, A => B, _]), Y] =
+          (s, a) => (p.update(s, a), p.readout(s)(a))
+
   extension [S, A, B, Y] (m: Moore[Store[S, _] ~> Monomial[A, B, _]])
     def asPolyMap: PolyMap[Store[S, _], Monomial[A, B, _], Y] =
       PolyMap(

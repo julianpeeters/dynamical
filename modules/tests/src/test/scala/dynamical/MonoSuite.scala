@@ -1,9 +1,8 @@
 package dynamical
 
 import cats.implicits.*
-import munit.FunSuite
 import dynamical.fsm.{Mealy, Moore, Wrapper}
-import dynamical.fsm.Mealy.asMealy
+import munit.FunSuite
 import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
 

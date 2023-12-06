@@ -30,7 +30,7 @@ lazy val root = project.in(file(".")).aggregate(tests)
 lazy val fsm = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("modules/fsm"))
   .settings(
-    name := "dynamical",
+    name := "dynamical-fsm",
     libraryDependencies ++= Seq(
       "com.julianpeeters" %%% "polynomial" % "0.0.0+13-fd3c99ce+20231204-1819-SNAPSHOT",
     )
