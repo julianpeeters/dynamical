@@ -19,7 +19,6 @@ object Moore:
   ): Moore[Store[S, _] ~> Monomial[A, B, _]] =
     PolyMap[Store[S, _], Monomial[A, B, _], Y](r, u)
       .asMoore(i)
-
   
   def apply[S, A1, B1, A2, B2, Y](
     i: S,
