@@ -47,3 +47,13 @@ class TensorSuite extends FunSuite:
     val expected: List[(Int, Int)] = List((2, 22), (4, 44), (6, 66))
     assertEquals(obtained, expected)
 
+  test("wrapper tensor moore"):
+    val m1: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
+    val m2: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
+    val m3: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _])] = (m1 ⊗ m2)
+    val n1: Wrapper[(Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> (Monomial[Int, Int => Int, _])] = Wrapper(b => a => a + a, (bb, a) => (bb._1 + a, bb._2 + a))
+    val r: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> Monomial[Int, Int => Int, _]] = n1.wrap(m3)
+    val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)((s, a) => (r.update(s, a), r.readout(s)(a)))._2
+    val expected: List[Int] = List(2, 4, 6)
+    assertEquals(obtained, expected)
+

@@ -18,17 +18,36 @@ object Wrapper:
   ): Wrapper[Monomial[A, B, _] ~> Monomial[A, A => B, _]] =
     PolyMap[Monomial[A, B, _], Monomial[A, A => B, _], Y](r, u).asWrapper
 
+  @scala.annotation.targetName("appTensored1")
+  def apply[A, B, Y](
+    r: ((B, B)) => A => B,
+    u: ((B, B), A) => (A, A)
+  ): Wrapper[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]] =
+    PolyMap[(Monomial[A, B, _] ⊗ Monomial[A, B, _]), Monomial[A, A => B, _], Y](r, u).asWrapper
+
   extension [S, A, B, Y] (w: Wrapper[Monomial[A, B, _] ~> Monomial[A, A => B, _]])
     def asPolyMap: PolyMap[Monomial[A, B, _], Monomial[A, A => B, _], Y] =
       PolyMap(w.`f₁`, w.`f#`)
+    @scala.annotation.targetName("wrapTensored1")
     def wrap(m: Moore[Store[S, _] ~> Monomial[A, B, _]]): Moore[Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _]] =
       m.asPolyMap.andThen(w.asPolyMap).asMoore(m.init)
+
+  extension [S1, S2, A, B, Y] (w: Wrapper[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]])
+    def wrap(
+      m: Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Monomial[A, B, _] ⊗ Monomial[A, B, _])]
+    ): Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]] =
+      m.asPolyMap.andThen(w.asPolyMap).asMoore(m.init)
+
+  extension [S, A, B, Y] (w: Wrapper[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]])
+    @scala.annotation.targetName("asPolyMap1")
+    def asPolyMap: PolyMap[(Monomial[A, B, _] ⊗ Monomial[A, B, _]), Monomial[A, A => B, _], Y] =
+      PolyMap(w.`f₁`, w.`f#`)
 
   extension [S1, S2, A1, B1, A2, B2, Y] (w: Wrapper[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> (Monomial[A1, A1 => B1, _] ⊗ Monomial[A2, A2 => B2, _])])
     @scala.annotation.targetName("asPolyMapTensored")
     def asPolyMap: PolyMap[Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _], Monomial[A1, A1 => B1, _] ⊗ Monomial[A2, A2 => B2, _], Y] =
       PolyMap(w.`f₁`, w.`f#`)
-    @scala.annotation.targetName("wrapTensored")
+    @scala.annotation.targetName("wrapTensored2")
     def wrap(
       m: Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _])]
     ): Moore[
@@ -45,6 +64,15 @@ object Wrapper:
         def `f₁`[Y]: Readout[Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] =
           p.φ
         def `f#`[Y]: Update[Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] =
+          p.`φ#`
+
+  extension [S, A, B, Y] (p: PolyMap[(Monomial[A, B, _] ⊗ Monomial[A, B, _]), Monomial[A, A => B, _], Y])
+    @scala.annotation.targetName("asWrapperMonoMonoTensored")
+    def asWrapper: Wrapper[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]] =
+      new Wrapper[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]]:
+        def `f₁`[Y]: Readout[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _], Y] =
+          p.φ
+        def `f#`[Y]: Update[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _], Y] =
           p.`φ#`
 
   extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (w1: Wrapper[Monomial[A1, B1, _] ~> Monomial[A2, B2, _]])

@@ -53,6 +53,19 @@ object Moore:
         def update[Y]: Update[Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _], Y] =
           p.`φ#`
 
+
+  extension [S1, S2, A, B, Y] (p: PolyMap[PolyMap[(Store[S1, _] ⊗ Store[S2, _]), (Monomial[A, B, _] ⊗ Monomial[A, B, _]), _], Monomial[A, A => B, _], Y])
+    @scala.annotation.targetName("asMooreMonoMono2")
+    def asMoore(i: (S1, S2)): Moore[PolyMap[(Store[S1, _] ⊗ Store[S2, _]), (Monomial[A, B, _] ⊗ Monomial[A, B, _]), _] ~> Monomial[A, A => B, _]] =
+      new Moore[PolyMap[(Store[S1, _] ⊗ Store[S2, _]), (Monomial[A, B, _] ⊗ Monomial[A, B, _]), _] ~> Monomial[A, A => B, _]]:
+        def init[Y]: Init[PolyMap[(Store[S1, _] ⊗ Store[S2, _]), (Monomial[A, B, _] ⊗ Monomial[A, B, _]), _] ~> Monomial[A, A => B, _], Y] =
+          i
+        def readout[Y]: Readout[PolyMap[(Store[S1, _] ⊗ Store[S2, _]), (Monomial[A, B, _] ⊗ Monomial[A, B, _]), _] ~> Monomial[A, A => B, _], Y] =
+          p.φ
+        def update[Y]: Update[PolyMap[(Store[S1, _] ⊗ Store[S2, _]), (Monomial[A, B, _] ⊗ Monomial[A, B, _]), _] ~> Monomial[A, A => B, _], Y] =
+          p.`φ#`
+
+
   extension [S, A1, B1, A2, B2, Y] (p: PolyMap[Store[S, _], Binomial[A1, B1, A2, B2, _], Y])
     @scala.annotation.targetName("asMooreBi")
     def asMoore(i: S): Moore[Store[S, _] ~> Binomial[A1, B1, A2, B2, _]] =
