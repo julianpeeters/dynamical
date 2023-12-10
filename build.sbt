@@ -32,7 +32,7 @@ lazy val fsm = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "dynamical-fsm",
     libraryDependencies ++= Seq(
-      "com.julianpeeters" %%% "polynomial" % "0.0.0+13-fd3c99ce+20231204-1819-SNAPSHOT",
+      "com.julianpeeters" %%% "polynomial" % "0.0.0+14-7d6d47e3+20231209-1245-SNAPSHOT",
     )
   )
 
