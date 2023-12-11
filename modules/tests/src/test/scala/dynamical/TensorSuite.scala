@@ -40,7 +40,7 @@ class TensorSuite extends FunSuite:
       (Store[Boolean, _] ⊗ Store[Boolean, _]) ~>
         ((Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _])) ~>
           (Monomial[Int, Int => Int, _] ⊗ Monomial[Int, Int => Int, _])
-    ] = w3.wrap(m3)
+    ] = m3.andThen(w3)//.wrap(m3)
     val obtained: List[(Int, Int)] = List((1, 11), (2, 22), (3, 33)).mapAccumulate(r.init)(
       (s, a) => (r.update(s, a), (r.readout(s)._1(a._1), r.readout(s)._2(a._2)))
     )._2
@@ -52,8 +52,22 @@ class TensorSuite extends FunSuite:
     val m2: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
     val m3: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _])] = (m1 ⊗ m2)
     val n1: Wrapper[(Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> (Monomial[Int, Int => Int, _])] = Wrapper(b => a => a + a, (bb, a) => (bb._1 + a, bb._2 + a))
-    val r: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> Monomial[Int, Int => Int, _]] = n1.wrap(m3)
+    val r: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> Monomial[Int, Int => Int, _]] = m3.andThen(n1)
     val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)((s, a) => (r.update(s, a), r.readout(s)(a)))._2
     val expected: List[Int] = List(2, 4, 6)
     assertEquals(obtained, expected)
 
+  
+  // test("text tensor"):
+  //   val w: Wrapper[(Binomial[Some[Byte], None.type, None.type, Some[String], _] ⊗ Binomial[Some[String], None.type, None.type, Some[List[String]], _]) ~> Binomial[Some[Byte], Some[Byte] => None.type, None.type, None.type => Some[List[String]], _]] =
+  //     ???
+  //     // Wrapper(a => b => a + b, a => b => a + b, a => b => a + b, a => b => a + b)
+  //   val s = (text.utf8.decoder ⊗ text.reader).andThen(w)//andThen(w)//.andThen(Wrapper())   //.andThen("")//.andThen(???)
+  //   val m1: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
+  //   val m2: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
+  //   val m3: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _])] = (m1 ⊗ m2)
+  //   val n1: Wrapper[(Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> (Monomial[Int, Int => Int, _])] = Wrapper(b => a => a + a, (bb, a) => (bb._1 + a, bb._2 + a))
+  //   val r: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> Monomial[Int, Int => Int, _]] = m3.andThen(n1)
+  //   val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)((s, a) => (r.update(s, a), r.readout(s)(a)))._2
+  //   val expected: List[Int] = List(2, 4, 6)
+  //   assertEquals(obtained, expected)

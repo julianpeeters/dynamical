@@ -39,6 +39,28 @@ object Mealy:
           (s, a) => (m1.update(s._1, a._1), m2.update(s._2, a._2))
         def run[Y]: Run[(Store[S1, _]) ⊗ (Store[S2, _]) ~> ((Monomial[A1, A1 => B1, _]) ⊗ (Monomial[A2, A2 => B2, _])), Y] =
           (s, a) => (update(s, a), (readout(s)._1(a._1), readout(s)._2(a._2)))
+
+  // extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (m1: Mealy[Store[S1, _] ~> Binomial[A1, B1, A2, B2, _]])
+  //   @scala.annotation.targetName("tensor2")
+  //   def ⊗(
+  //     m2: Mealy[Store[S2, _] ~> Binomial[A3, B3, A4, B4, _]]
+  //   ): Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _])] =
+  //     // ???
+  //     // this is commented because maybe teh modes are conflicting?
+  //     // maybe try alternating the modes instead of 
+  //     new Moore[(Store[S1, _]) ⊗ (Store[S2, _]) ~> (Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _])]:
+  //       def init[Y]: Init[(Store[S1, _] ⊗ Store[S2, _]) ~> (Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _]), Y] =
+  //         (m1.init, m2.init)
+  //       def readout[Y]: Readout[(Store[S1, _] ⊗ Store[S2, _]) ~> (Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _]), Y] =
+  //         ???
+  //         // ???
+  //         // (s1: S1, s2: S2) => (m1.readout._1(s1), m2.readout._2(s2))// (a1, a2) => (m1.readout(s)(a1), m2.readout(t)(a2))
+  //       def update[Y]: Update[(Store[S1, _] ⊗ Store[S2, _]) ~> (Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _]), Y] =
+  //         ???
+  //         // (s, a) => (m1.update(s._1, a._1), m2.update(s._2, a._2))
+  //       // def run[Y]: Run[(Store[S1, _] ⊗ Store[S2, _]) ~> (Binomial[A1, A1 => B1, A2, A2 => B2, _] ⊗ Binomial[A3, A3 => B3, A4, A4 => B4, _]), Y] =
+  //       //   ???
+  //       //   (s, a) => (update(s, a), (readout(s)._1(a._1), readout(s)._2(a._2)))
       
   extension [S, A, B, Y] (p: PolyMap[Store[S, _], Monomial[A, A => B, _], Y])
     @scala.annotation.targetName("asMealyPolyMono")
