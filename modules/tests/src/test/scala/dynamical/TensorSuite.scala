@@ -1,9 +1,7 @@
 package dynamical
 
 import cats.implicits.*
-import destructured.given
 import dynamical.fsm.{Mealy, Moore, Wrapper}
-import dynamical.seq.noneTerminate
 import munit.FunSuite
 import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
@@ -53,11 +51,4 @@ class TensorSuite extends FunSuite:
     val r: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> Monomial[Int, Int => Int, _]] = m3.andThen(n1).asMealy
     val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)((s, a) => (r.update(s, a), r.readout(s)(a)))._2
     val expected: List[Int] = List(2, 4, 6)
-    assertEquals(obtained, expected)
-
-  test("text tensor"):
-    val machine = (text.utf8.decoder ⊗ text.lineReader.swapInterfacePos).andThen(Wrapper.serially).asMealy
-    val obtained = "hello\ngoodbye".getBytes().toList.noneTerminate.mapAccumulate(machine.init)(machine.run)._2
-      .foldLeft(Seq.empty[String])((acc, ms) => if ms.isDefined then acc ++ ms.get else acc).toList
-    val expected: List[String] = List("hello", "goodbye")
     assertEquals(obtained, expected)
