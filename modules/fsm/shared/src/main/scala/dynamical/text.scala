@@ -1,7 +1,7 @@
 package dynamical
 
 import cats.implicits.*
-import dynamical.fsm.{Moore, Wrapper}
+import dynamical.fsm.{Moore, Wiring}
 import dynamical.seq.noneTerminate
 import polynomial.morphism.~>
 import polynomial.`object`.{Binomial, Store}
@@ -16,7 +16,7 @@ object text:
       Binomial[Some[String], None.type, None.type, Some[List[String]], _] ~>
         Binomial[Some[String], Some[String] => None.type, None.type, None.type => Some[List[String]], _]
   ] = lineReader.andThen(
-    Wrapper(
+    Wiring(
       none => _ => none,
       some => _ => some,
       (none, a1) => _ => none,
@@ -51,7 +51,7 @@ object text:
           Binomial[Some[Byte], Some[Byte] => None.type, None.type, None.type => Some[String], _]
     ] =
       decoder.andThen(
-        Wrapper(
+        Wiring(
           none => _ => none,
           some => _ => some,
           (none, a1) => _ => none,

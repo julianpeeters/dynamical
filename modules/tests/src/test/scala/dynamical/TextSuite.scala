@@ -2,7 +2,7 @@ package dynamical
 
 import cats.implicits.given
 import destructured.given
-import dynamical.fsm.Wrapper
+import dynamical.fsm.Wiring
 import dynamical.seq.{noneTerminate, through}
 
 import munit.FunSuite
@@ -22,7 +22,7 @@ class TextSuite extends FunSuite:
     assertEquals(obtained, expected)
 
   test("text tensor"):
-    val machine = (text.utf8.decoder ⊗ text.lineReader.swapInterfacePos).andThen(Wrapper.serially).asMealy
+    val machine = (text.utf8.decoder ⊗ text.lineReader.swapInterfacePos).andThen(Wiring.serially).asMealy
     val obtained = "hello\ngoodbye".getBytes().toList.noneTerminate.mapAccumulate(machine.init)(machine.run)._2
       .foldLeft(Seq.empty[String])((acc, ms) => if ms.isDefined then acc ++ ms.get else acc).toList
     val expected: List[String] = List("hello", "goodbye")

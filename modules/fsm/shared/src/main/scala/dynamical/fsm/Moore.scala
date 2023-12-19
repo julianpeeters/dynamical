@@ -116,7 +116,7 @@ object Moore:
   extension [S, A, B, Y] (m: Moore[Store[S, _] ~> Monomial[A, B, _]])
     @scala.annotation.targetName("andThenStoreMonoToMono")
     def andThen(
-      w: Wrapper[Monomial[A, B, _] ~> Monomial[A, A => B, _]]
+      w: Wiring[Monomial[A, B, _] ~> Monomial[A, A => B, _]]
     ): Moore[Store[S, _] ~> Monomial[A, B, _] ~> Monomial[A, A => B, _]] =
       m.asPolyMap
        .andThen(w.asPolyMap)
@@ -125,7 +125,7 @@ object Moore:
   extension [S, A1, B1, A2, B2, Y] (m: Moore[Store[S, _] ~> Binomial[A1, B1, A2, B2, _]])
     @scala.annotation.targetName("andThenStoreBiToBi")
     def andThen(
-      w: Wrapper[Binomial[A1, B1, A2, B2, _] ~> Binomial[A1, A1 => B1, A2, A2 => B2, _]]
+      w: Wiring[Binomial[A1, B1, A2, B2, _] ~> Binomial[A1, A1 => B1, A2, A2 => B2, _]]
     ): Moore[Store[S, _] ~> Binomial[A1, B1, A2, B2, _] ~> Binomial[A1, A1 => B1, A2, A2 => B2, _]] =
       m.asPolyMap
        .andThen(w.asPolyMap)
@@ -134,12 +134,12 @@ object Moore:
   extension [S1, S2, A1, B1, A2, B2, Y] (m: Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _])])
     @scala.annotation.targetName("andThenStoreStoreTensorMonoMonoTensorToMono")
     def andThen(
-      w: Wrapper[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> Monomial[A1, A1 => B2, _]]
+      w: Wiring[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> Monomial[A1, A1 => B2, _]]
     ): Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> Monomial[A1, A1 => B2, _]] =
       m.asPolyMap.andThen(w.asPolyMap).asMoore(m.init)
     @scala.annotation.targetName("andThenStoreStoreTensorMonoMonoTensorToMonoMonoTensor")
     def andThen(
-      w: Wrapper[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> (Monomial[A1, A1 => B1, _] ⊗ Monomial[A2, A2 => B2, _])]
+      w: Wiring[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> (Monomial[A1, A1 => B1, _] ⊗ Monomial[A2, A2 => B2, _])]
     ): Moore[
       (Store[S1, _] ⊗ Store[S2, _]) ~>
         (Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~>
@@ -152,7 +152,7 @@ object Moore:
   extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (m: Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _])])
     @scala.annotation.targetName("andThenStoreStoreTensorBiBiTensorToBi")
     def andThen(
-      w: Wrapper[(Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _]) ~>  Binomial[A1, A1 => B3, A2, A2 => B4, _]]
+      w: Wiring[(Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _]) ~>  Binomial[A1, A1 => B3, A2, A2 => B4, _]]
     )(using
       C: CtorOf[S1, A4],
       H: Is[B1, A3],
@@ -160,7 +160,7 @@ object Moore:
       V: CtorOf[S2, A3]
     ): Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _]) ~>  Binomial[A1, A1 => B3, A2, A2 => B4, _]] =
       m.asPolyMap
-       .andThen(Wrapper.aspm(w), V.apply, C.apply, H.coerce, I.coerce)
+       .andThen(Wiring.aspm(w), V.apply, C.apply, H.coerce, I.coerce)
        .asMoore(m.init)
 
   // Conversions //////////////////////////////////////////////////////////////
