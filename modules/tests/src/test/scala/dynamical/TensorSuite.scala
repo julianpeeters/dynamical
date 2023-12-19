@@ -48,7 +48,7 @@ class TensorSuite extends FunSuite:
     val m2: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
     val m3: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _])] = (m1 ⊗ m2)
     val n1: Wrapper[(Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> (Monomial[Int, Int => Int, _])] = Wrapper(b => a => a + a, (bb, a) => (bb._1 + a, bb._2 + a))
-    val r: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> Monomial[Int, Int => Int, _]] = m3.andThen(n1).asMealy
-    val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)((s, a) => (r.update(s, a), r.readout(s)(a)))._2
+    val r: Mealy[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> Monomial[Int, Int => Int, _]] = m3.andThen(n1).asMealy
+    val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)(r.run)._2
     val expected: List[Int] = List(2, 4, 6)
     assertEquals(obtained, expected)
