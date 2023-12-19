@@ -35,7 +35,7 @@ class BiSuite extends FunSuite:
             _
           ]
       ] =
-        Mealy(false, s => _ => None, s => i => Some(0), (s, i) => s, (s, i) => s)
+        Mealy(false, s => _ => None, s => _ => Some(0), (s, i) => s, (s, i) => s)
       val obtained: List[Option[Int]] = List(Some(1), None, Some(3)).mapAccumulate(m.init)(m.run)._2
       val expected: List[Option[Int]] = List(None, Some(0), None)
       assertEquals(obtained, expected)
