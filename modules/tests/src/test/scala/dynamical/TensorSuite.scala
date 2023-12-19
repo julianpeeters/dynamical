@@ -52,25 +52,18 @@ class TensorSuite extends FunSuite:
     val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)(r.run)._2
     val expected: List[Int] = List(2, 4, 6)
     assertEquals(obtained, expected)
-
-  // test("wiring"):
-  //   type Plant[T, U, V, Y]   = Monomial[(T, U), V, Y]
-  //   type Controller[T, U, Y] = Monomial[U, T, Y]
-  //   type System[T, U, Y]     = Monomial[T, U, Y]
-
-  //   def w1[A, B, C, Y]: Wiring[(Plant[A, B, C, _] ⊗ Controller[B, C, _]) ~> System[A, C, _]] =
-  //     ???
-  //   val _ = w1
-
-  //   def machine[S1, S2, A, B, C]: Mealy[((Store[S1, _] ⊗ Store[S2, _]) ~> (Plant[A, B, C, _] ⊗ Controller[B, C, _]) ~> System[A, C, _])] =
-  //     ???
-
-  //   val _ = machine
-  //   val m1: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
-  //   val m2: Moore[Store[Boolean, _] ~> Monomial[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
-  //   val m3: Moore[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _])] = (m1 ⊗ m2)
-  //   val n1: Wiring[(Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> (Monomial[Int, Int => Int, _])] = Wiring(b => a => a + a, (bb, a) => (bb._1 + a, bb._2 + a))
-  //   val r: Mealy[(Store[Boolean, _]) ⊗ (Store[Boolean, _]) ~> (Monomial[Int, Int, _] ⊗ Monomial[Int, Int, _]) ~> Monomial[Int, Int => Int, _]] = m3.andThen(n1).asMealy
-  //   val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)(r.run)._2
-  //   val expected: List[Int] = List(2, 4, 6)
-  //   assertEquals(obtained, expected)
+    
+  test("wiring"):
+    type Plant[Y]      = Monomial[(Byte, Byte => Char), Char, Y]
+    type Controller[Y] = Monomial[Char, Byte => Char, Y]
+    type System[Y]     = Monomial[Byte, Byte => Char, Y]
+    type ω[Y] = ((Plant ⊗ Controller) ~> System)[Y]
+    val w: Wiring[ω] = Wiring(b => a => b._2(a), (b, a) => ((a, b._2), b._2(a)))
+    val f1: Byte => Char = b => b.toChar.toChar
+    val f2: Byte => Char = b => b.toChar.toUpper.toChar
+    val m1: Moore[Store[Char, _] ~> Plant] = Moore(" ".charAt(0), identity, (s, i) => i._2(i._1))
+    val m2: Moore[Store[Byte => Char, _] ~> Controller] = Moore(f1, identity, (f, i) => if i != ' ' then f else f2)
+    val machine: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] = (m1 ⊗ m2).andThen(w).asMealy
+    val obtained: String = "hello world".getBytes().toList.mapAccumulate(machine.init)(machine.run)._2.mkString
+    val expected: String = "hello WORLD"
+    assertEquals(obtained, expected)

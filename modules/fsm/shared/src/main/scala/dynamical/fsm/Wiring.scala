@@ -34,6 +34,12 @@ object Wiring:
   ): Wiring[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]] =
     PolyMap[(Monomial[A, B, _] ⊗ Monomial[A, B, _]), Monomial[A, A => B, _], Y](r, u).asWiring
 
+  @scala.annotation.targetName("appTensored2")
+  def apply[A, B, C, Y](
+    r: ((C, B)) => A => C,
+    u: ((C, B), A) => ((A, B), C)
+  ): Wiring[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]) ~> Monomial[A, A => C, _]] =
+    PolyMap[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]), Monomial[A, A => C, _], Y](r, u).asWiring  
 
   @scala.annotation.targetName("appBiTensored1")
   def apply[A1, B1, A2, B2, A3, B3, A4, B4, Y](
@@ -48,7 +54,7 @@ object Wiring:
     PolyMap[(Binomial[A1, B1, A2, B2, _] ⊗ Binomial[B1, B1, B2, B3, _]),  Binomial[A1, A1 => B1, A2, A2 => B3, _], Y](
       (
         (_, b1) => _ => b1,
-        (_, b3) => a2 =>  b3
+        (_, b3) => a2 => b3
       ),(
         (b, a1) => (_ => b._2),
         (b, a2) => (_ => b._2)
@@ -62,6 +68,26 @@ object Wiring:
   extension [A1, B1, A2, B2, Y] (w: Wiring[(Binomial[A1, B1, A2, B2, _]) ~> (Binomial[A1, A1 => B1, A2, A2 => B2, _])])
     @scala.annotation.targetName("asPolyMapWiringBiBi")
     def asPolyMap: PolyMap[Binomial[A1, B1, A2, B2, _], Binomial[A1, A1 => B1, A2, A2 => B2, _], Y] =
+      PolyMap(w.`f₁`, w.`f#`)
+
+  extension [A1, B1, A2, B2, Y] (w: Wiring[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> Monomial[A1, B2, _]])
+    @scala.annotation.targetName("asPolyMapMonoMonoTensoredToMono1")
+    def asPolyMap: PolyMap[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]), Monomial[A1, B2, _], Y] =
+      PolyMap(w.`f₁`, w.`f#`)
+
+  extension [A1, B1, A2, B2, Y] (w: Wiring[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> Monomial[A1, B1, _]])
+    @scala.annotation.targetName("asPolyMapMonoMonoTensoredToMono2")
+    def asPolyMap: PolyMap[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]), Monomial[A1, B1, _], Y] =
+      PolyMap(w.`f₁`, w.`f#`)
+
+  // extension [A, B, C, Y] (w: Wiring[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]) ~> Monomial[A, C, _]])
+  //   @scala.annotation.targetName("asPolyMapMonoMonoTensoredToMono3")
+  //   def asPolyMap: PolyMap[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]), Monomial[A, C, _], Y] =
+  //     PolyMap(w.`f₁`, w.`f#`)
+
+  extension [A, B, C, Y] (w: Wiring[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]) ~> Monomial[A, A => C, _]])
+    @scala.annotation.targetName("asPolyMapMonoMonoTensoredToMono4")
+    def asPolyMap: PolyMap[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]), Monomial[A, A => C, _], Y] =
       PolyMap(w.`f₁`, w.`f#`)
 
   extension [A1, B1, A2, B2, Y] (w: Wiring[(Monomial[A1, B1, _] ⊗ Monomial[A2, B2, _]) ~> Monomial[A1, A1 => B2, _]])
@@ -101,12 +127,21 @@ object Wiring:
           p.`φ#`
 
   extension [A, B, Y] (p: PolyMap[(Monomial[A, B, _] ⊗ Monomial[A, B, _]), Monomial[A, A => B, _], Y])
-    @scala.annotation.targetName("asWiringMonoMonoTensored")
+    @scala.annotation.targetName("asWiringMonoMonoTensored1")
     def asWiring: Wiring[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]] =
       new Wiring[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _]]:
         def `f₁`[Y]: Readout[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _], Y] =
           p.φ
         def `f#`[Y]: Update[(Monomial[A, B, _] ⊗ Monomial[A, B, _]) ~> Monomial[A, A => B, _], Y] =
+          p.`φ#`
+
+  extension [A, B, C, Y] (p: PolyMap[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]), Monomial[A, A => C, _], Y])
+    @scala.annotation.targetName("asWiringMonoMonoTensored2")
+    def asWiring: Wiring[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]) ~> Monomial[A, A => C, _]] =
+      new Wiring[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]) ~> Monomial[A, A => C, _]]:
+        def `f₁`[Y]: Readout[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]) ~> Monomial[A, A => C, _], Y] =
+          p.φ
+        def `f#`[Y]: Update[(Monomial[(A, B), C, _] ⊗ Monomial[C, B, _]) ~> Monomial[A, A => C, _], Y] =
           p.`φ#`
 
   extension [A1, B1, A2, B2, A3, B3, A4, B4, Y] (p: PolyMap[(Binomial[A1, B1, A2, B2, _] ⊗ Binomial[A3, B3, A4, B4, _]), Binomial[A1, A1 => B3, A2, A2 => B4, _], Y])
