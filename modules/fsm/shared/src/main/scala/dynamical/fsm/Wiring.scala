@@ -1,6 +1,6 @@
 package dynamical.fsm
 
-import dynamical.fsm.types.{Readout, Update}
+import dynamical.fsm.internal.{Readout, Update}
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.{Binomial, Monomial}
 import polynomial.product.⊗

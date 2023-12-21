@@ -1,7 +1,7 @@
 package dynamical.fsm
 
+import dynamical.fsm.internal.{Init, Readout, Run, Update}
 import dynamical.fsm.run.Runner2
-import dynamical.fsm.types.{Init, Readout, Run, Update}
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.{Binomial, Monomial, Store}
 import polynomial.product.⊗

@@ -1,6 +1,6 @@
 package dynamical.fsm.run
 
-import dynamical.fsm.types.{Unify2}
+import dynamical.fsm.internal.{Unify2}
 import polynomial.`object`.{Binomial, Store}
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.product.⊗

@@ -25,27 +25,25 @@ inThisBuild(List(
   versionScheme := Some("semver-spec"),
 ))
 
-lazy val root = project.in(file(".")).aggregate(tests)
+lazy val root = crossProject(JSPlatform, JVMPlatform, NativePlatform)
+  .in(file("."))
+  .enablePlugins(NoPublishPlugin)
+  .jsSettings(test := {})
+  .nativeSettings(test := {})
+  .aggregate(fsm)
 
 lazy val fsm = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("modules/fsm"))
   .settings(
     name := "dynamical-fsm",
     libraryDependencies ++= Seq(
-      "com.julianpeeters" %%% "polynomial"   % "0.0.0+17-d8e702e2+20231217-2013-SNAPSHOT",
+      "com.julianpeeters" %%% "polynomial"   % "0.1.0",
       "com.julianpeeters" %%% "destructured" % "0.2.0",
+      "org.scalameta"      %% "munit"        % "0.7.29" % Test
     )
   )
-
-lazy val tests = project.in(file("modules/tests"))
-  .settings(
-    name := "dynamical-tests",
-    libraryDependencies ++= Seq(
-      "org.scalameta" %% "munit" % "0.7.29" % Test
-    )
-  )
-  .dependsOn(fsm.jvm)
-  .enablePlugins(NoPublishPlugin)
+  .jsSettings(test := {})
+  .nativeSettings(test := {})
 
 lazy val docs = project.in(file("docs/gitignored"))
   .settings(

@@ -59,8 +59,8 @@ class TensorSuite extends FunSuite:
     type System[Y]     = Monomial[Byte, Byte => Char, Y]
     type ω[Y] = ((Plant ⊗ Controller) ~> System)[Y]
     val w: Wiring[ω] = Wiring(b => a => b._2(a), (b, a) => ((a, b._2), b._2(a)))
-    val f1: Byte => Char = b => b.toChar.toChar
-    val f2: Byte => Char = b => b.toChar.toUpper.toChar
+    val f1: Byte => Char = b => b.toChar
+    val f2: Byte => Char = b => b.toChar.toUpper
     val m1: Moore[Store[Char, _] ~> Plant] = Moore(" ".charAt(0), identity, (s, i) => i._2(i._1))
     val m2: Moore[Store[Byte => Char, _] ~> Controller] = Moore(f1, identity, (f, i) => if i != ' ' then f else f2)
     val machine: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] = (m1 ⊗ m2).andThen(w).asMealy

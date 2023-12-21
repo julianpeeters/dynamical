@@ -5,6 +5,7 @@ import dynamical.fsm.{Mealy, Moore, Wiring}
 import munit.FunSuite
 import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
+import scala.Int
 
 class MonoSuite extends FunSuite:
 
