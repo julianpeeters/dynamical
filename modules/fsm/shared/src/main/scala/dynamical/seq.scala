@@ -1,10 +1,10 @@
 package dynamical.seq
 
-case class EOS(msg: String)
+case object EOS
 
-extension [A, B] (as: Seq[A])
+extension [A] (as: Seq[A])
 
-  def through(p: Seq[A] => Seq[B]): Seq[B] =
+  def through[B](p: Seq[A] => Seq[B]): Seq[B] =
     p(as)
 
   def noneTerminate: Seq[Option[A]] =
