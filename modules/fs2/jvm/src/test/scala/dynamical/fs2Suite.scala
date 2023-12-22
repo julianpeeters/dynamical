@@ -1,6 +1,7 @@
 package dynamical
 
-import dynamical.fsm.{Mealy, transducer}
+import dynamical.fsm.Mealy
+import dynamical.stream.transducer
 import fs2.Stream
 import munit.FunSuite
 import polynomial.morphism.~>

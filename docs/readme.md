@@ -114,10 +114,11 @@ val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)
 "com.julianpeeters" %% "dynamical-fs2" % "@VERSION@"
 ```
 
-The `dynamical-fs2` library provides a `transducer for `fs2 streaming integration:
+The `dynamical-fs2` library provides fs2 integration, in the form of a stream `transducer`:
 
 ```scala mdoc:reset
-import dynamical.fsm.{Mealy, transducer}
+import dynamical.fsm.Mealy
+import dynamical.stream.transducer
 import fs2.Stream
 import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}

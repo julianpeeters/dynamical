@@ -1,6 +1,7 @@
-package dynamical.fsm
+package dynamical.stream
 
 import fs2.Pipe
+import dynamical.fsm.Mealy
 import dynamical.fsm.internal.Unify2
 import polynomial.morphism.~>
 import polynomial.`object`.{Binomial, Monomial, Store}
