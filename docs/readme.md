@@ -1,18 +1,17 @@
 # dynamical
 Based on the dependent lenses described in [Niu and Spivak](https://topos.site/poly-book.pdf)
 
-### Add the dependency:
+### Modules
+ - [`dynamical-fsm`](#dynamical-fsm): composable finite state machines
+ - [`dynamical-fs2`](#dynamical-fs2): integration with [fs2](https://fs2.io/#/) concurrent streams
+
+## `dynamical-fsm`
  - libarary for Scala @SCALA@ (JS, JVM, and Native platforms)
  - depends on polynomial @POLYNOMIAL@ (and, internally, destructured @DESTRUCTURED@)
  
 ```scala
-"com.julianpeeters" %% "dynamical" % "@VERSION@"
+"com.julianpeeters" %% "dynamical-fsm" % "@VERSION@"
 ```
-
-### Modules
- - [`dynamical-fsm`](#dynamical-fsm)
-
-#### `dynamical-fsm`
 
 The `dynamical-fsm` library provides the components of finite state machines:
  - `Moore[P[_]]`: "simple and composable"
@@ -21,8 +20,8 @@ The `dynamical-fsm` library provides the components of finite state machines:
 
 ##### `Moore[P[_]]`
 
-The simplest, and therefore most straightforward, finite state machines are
-parameterized by a polymap from store to a monomial:
+The mose basic finite state machines are those parameterized by a polymap from
+a store to a monomial:
 
 ```scala mdoc
 import polynomial.`object`.{Monomial, Store}
@@ -106,3 +105,23 @@ val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)
 ```
 
 (Note: example adapted from [Niu and Spivak](https://topos.site/poly-book.pdf))
+
+## `dynamical-fs2`
+ - libarary for Scala @SCALA@ (JS, JVM, and Native platforms)
+ - depends on fs2 @FS2@
+ 
+```scala
+"com.julianpeeters" %% "dynamical-fs2" % "@VERSION@"
+```
+
+The `dynamical-fs2` library provides a `transducer for `fs2 streaming integration:
+
+```scala mdoc:reset
+import dynamical.fsm.{Mealy, transducer}
+import fs2.Stream
+import polynomial.morphism.~>
+import polynomial.`object`.{Monomial, Store}
+
+val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
+val l: List[Int] = Stream(1, 2, 3).through(m.transducer).compile.toList
+```
