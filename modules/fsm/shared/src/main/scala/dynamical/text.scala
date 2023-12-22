@@ -1,6 +1,6 @@
 package dynamical
 
-import cats.implicits.*
+import cats.implicits.given
 import dynamical.fsm.{Moore, Wiring}
 import dynamical.seq.noneTerminate
 import polynomial.morphism.~>

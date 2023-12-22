@@ -1,11 +1,10 @@
 package dynamical
 
-import cats.implicits.*
+import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore, Wiring}
 import munit.FunSuite
 import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
-import scala.Int
 
 class MonoSuite extends FunSuite:
 
@@ -16,9 +15,9 @@ class MonoSuite extends FunSuite:
       assertEquals(obtained, expected)
 
     test("mealy"):
-      val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
+      val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = Mealy(false, s => i => if s then i + 1 else i, (s, i) => if i > 1 then true else s)
       val obtained: List[Int] = List(1, 2, 3).mapAccumulate(m.init)(m.run)._2
-      val expected: List[Int] = List(2, 4, 6)
+      val expected: List[Int] = List(1, 2, 4)
       assertEquals(obtained, expected)
 
     test("wrap moore"):

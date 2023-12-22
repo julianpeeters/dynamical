@@ -1,3 +1,7 @@
+val DestructuredV = "0.2.0"
+val MUnitV = "0.7.29"
+val PolynomialV = "0.1.0"
+
 inThisBuild(List(
   crossScalaVersions := Seq(scalaVersion.value),
   description := "Mode-dependent dynamical systems",
@@ -37,9 +41,9 @@ lazy val fsm = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "dynamical-fsm",
     libraryDependencies ++= Seq(
-      "com.julianpeeters" %%% "polynomial"   % "0.1.0",
-      "com.julianpeeters" %%% "destructured" % "0.2.0",
-      "org.scalameta"      %% "munit"        % "0.7.29" % Test
+      "com.julianpeeters" %%% "polynomial"   % PolynomialV,
+      "com.julianpeeters" %%% "destructured" % DestructuredV,
+      "org.scalameta"      %% "munit"        % MUnitV         % Test
     )
   )
   .jsSettings(test := {})
@@ -51,6 +55,8 @@ lazy val docs = project.in(file("docs/gitignored"))
     mdocVariables := Map(
       "SCALA" -> crossScalaVersions.value.map(e => e.takeWhile(_ != '.')).mkString(", "),
       "VERSION" -> version.value.takeWhile(_ != '+'),
+      "DESTRUCTURED" -> DestructuredV.reverse.dropWhile(_ != '.').drop(1).reverse,
+      "POLYNOMIAL" -> PolynomialV.reverse.dropWhile(_ != '.').drop(1).reverse,
     )
   )
   .dependsOn(fsm.jvm)

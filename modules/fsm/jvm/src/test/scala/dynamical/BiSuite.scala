@@ -1,6 +1,6 @@
 package dynamical
 
-import cats.implicits.*
+import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore}
 import munit.FunSuite
 import polynomial.morphism.~>
