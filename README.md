@@ -10,7 +10,7 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
  - depends on polynomial 0.1 (and, internally, destructured 0.2)
  
 ```scala
-"com.julianpeeters" %% "dynamical-fsm" % "0.0.0"
+"com.julianpeeters" %% "dynamical-fsm" % "0.1.0"
 ```
 
 The `dynamical-fsm` library provides the components of finite state machines:
@@ -98,13 +98,13 @@ type Controller[Y] = Monomial[Char, Byte => Char, Y]
 type System[Y]     = Monomial[Byte, Byte => Char, Y]
 type ω[Y] = ((Plant ⊗ Controller) ~> System)[Y]
 val w: Wiring[ω] = Wiring(b => a => b._2(a), (b, a) => ((a, b._2), b._2(a)))
-// w: Wiring[ω] = dynamical.fsm.Wiring$$anon$4@4700c17b
+// w: Wiring[ω] = dynamical.fsm.Wiring$$anon$4@63138758
 val m: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
   (Moore[Char, (Byte, Byte => Char), Char, Nothing](" ".charAt(0), identity, (s, i) => i._2(i._1))
     ⊗ Moore[Byte => Char, Char, Byte => Char, Nothing](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
-// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] => Store[Char, _$5], [_$6 >: Nothing <: Any] => Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.Moore$$anon$18@483c77a4
+// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] => Store[Char, _$5], [_$6 >: Nothing <: Any] => Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.Moore$$anon$18@266c5d52
 val fsm: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] = m.andThen(w).asMealy
-// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] => Store[Char, _$7], [_$8 >: Nothing <: Any] => Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.Moore$$anon$14@1a33a5fd
+// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] => Store[Char, _$7], [_$8 >: Nothing <: Any] => Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.Moore$$anon$14@5ad91f64
 val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)._2.mkString
 // s: String = "hello WORLD"
 ```
@@ -116,7 +116,7 @@ val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)
  - depends on fs2 3.9
  
 ```scala
-"com.julianpeeters" %% "dynamical-fs2" % "0.0.0"
+"com.julianpeeters" %% "dynamical-fs2" % "0.1.0"
 ```
 
 The `dynamical-fs2` library provides fs2 integration, in the form of a stream
@@ -130,7 +130,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
 
 val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
-// m: Mealy[~>[[_$9 >: Nothing <: Any] => Store[Boolean, _$9], [_$10 >: Nothing <: Any] => Monomial[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.Mealy$$anon$2@177cee8
+// m: Mealy[~>[[_$9 >: Nothing <: Any] => Store[Boolean, _$9], [_$10 >: Nothing <: Any] => Monomial[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.Mealy$$anon$2@52ef8c0a
 val l: List[Int] = Stream(1, 2, 3).through(m.transducer).compile.toList
 // l: List[Int] = List(2, 4, 6)
 ```
