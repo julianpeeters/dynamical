@@ -33,12 +33,10 @@ inThisBuild(List(
 lazy val root = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("."))
   .enablePlugins(NoPublishPlugin)
-  .settings(
-    name := "dynamical"
-  )
+  .settings(name := "dynamical")
   .jsSettings(test := {})
   .nativeSettings(test := {})
-  .aggregate(fsm, fs2)
+  .aggregate(fs2, fsm)
 
 lazy val fs2 = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .in(file("modules/fs2"))
