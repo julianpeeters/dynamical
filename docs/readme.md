@@ -14,9 +14,9 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
 ```
 
 The `dynamical-fsm` library provides the components of finite state machines:
- - `Moore[P[_]]`: "simple and composable"
- - `Mealy[P[_]]`: "composable and runnable"
- - `Wiring[P[_]]`: "adaptable and abstractable"
+ - `Moore[P[_]]`: "Simple & Composable"
+ - `Mealy[P[_]]`: "Composable & Runnable"
+ - `Wiring[P[_]]`: "Adaptable & Abstractable"
 
 ##### `Moore[P[_]]`
 
@@ -57,7 +57,7 @@ Mealy machines have a dedicated `run` method. A Moore machine forms a Mealy mach
 `A => B`. For example:
 
 ```scala
-import cats.implicits.given
+import cats.implicits.given  // for `mapAccumulate`
 import dynamical.fsm.{Moore}
 import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
@@ -79,11 +79,11 @@ val l: List[Int] = List(1, 2, 3).mapAccumulate(m.init)(m.run)._2
 Wirings, in contrast to state systems, are the interface systems that allow us
 to represent interaction patterns.
 
-For example, the composition of a state system with in interface system of
+For example, the composition of a state system with an "wrapper interface" of
 `((Plant ⊗ Controller) ~> System)[Y]`:
   - on one hand, it is "filled" (or "loaded") by composition with a tensored state system
   - on the other hand, it "wraps" a tensored state system in an non-tensored interface
-  - finally, delay is controlled by setting controller state to emit a runnable function
+  - note that there is no delay, since we defined the controller to emit a runnable function
 
 ```scala mdoc:reset
 import cats.implicits.given
@@ -114,7 +114,8 @@ val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)
 "com.julianpeeters" %% "dynamical-fs2" % "@VERSION@"
 ```
 
-The `dynamical-fs2` library provides fs2 integration, in the form of a stream `transducer`:
+The `dynamical-fs2` library provides fs2 integration, in the form of a stream
+`transducer` pipe:
 
 ```scala mdoc:reset
 import dynamical.fsm.Mealy

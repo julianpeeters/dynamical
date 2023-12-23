@@ -14,9 +14,9 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
 ```
 
 The `dynamical-fsm` library provides the components of finite state machines:
- - `Moore[P[_]]`: "simple and composable"
- - `Mealy[P[_]]`: "composable and runnable"
- - `Wiring[P[_]]`: "adaptable and abstractable"
+ - `Moore[P[_]]`: "Simple & Composable"
+ - `Mealy[P[_]]`: "Composable & Runnable"
+ - `Wiring[P[_]]`: "Adaptable & Abstractable"
 
 ##### `Moore[P[_]]`
 
@@ -58,7 +58,7 @@ Mealy machines have a dedicated `run` method. A Moore machine forms a Mealy mach
 `A => B`. For example:
 
 ```scala
-import cats.implicits.given
+import cats.implicits.given  // for `mapAccumulate`
 import dynamical.fsm.{Moore}
 import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
@@ -80,11 +80,11 @@ val l: List[Int] = List(1, 2, 3).mapAccumulate(m.init)(m.run)._2
 Wirings, in contrast to state systems, are the interface systems that allow us
 to represent interaction patterns.
 
-For example, the composition of a state system with in interface system of
+For example, the composition of a state system with an "wrapper interface" of
 `((Plant ⊗ Controller) ~> System)[Y]`:
   - on one hand, it is "filled" (or "loaded") by composition with a tensored state system
   - on the other hand, it "wraps" a tensored state system in an non-tensored interface
-  - finally, delay is controlled by setting controller state to emit a runnable function
+  - note that there is no delay, since we defined the controller to emit a runnable function
 
 ```scala
 import cats.implicits.given
@@ -98,13 +98,13 @@ type Controller[Y] = Monomial[Char, Byte => Char, Y]
 type System[Y]     = Monomial[Byte, Byte => Char, Y]
 type ω[Y] = ((Plant ⊗ Controller) ~> System)[Y]
 val w: Wiring[ω] = Wiring(b => a => b._2(a), (b, a) => ((a, b._2), b._2(a)))
-// w: Wiring[ω] = dynamical.fsm.Wiring$$anon$4@16293fe1
+// w: Wiring[ω] = dynamical.fsm.Wiring$$anon$4@27683333
 val m: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
   (Moore[Char, (Byte, Byte => Char), Char, Nothing](" ".charAt(0), identity, (s, i) => i._2(i._1))
     ⊗ Moore[Byte => Char, Char, Byte => Char, Nothing](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
-// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] => Store[Char, _$5], [_$6 >: Nothing <: Any] => Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.Moore$$anon$18@74afc0f3
+// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] => Store[Char, _$5], [_$6 >: Nothing <: Any] => Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.Moore$$anon$18@7e95b5b
 val fsm: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] = m.andThen(w).asMealy
-// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] => Store[Char, _$7], [_$8 >: Nothing <: Any] => Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.Moore$$anon$14@4382bd2
+// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] => Store[Char, _$7], [_$8 >: Nothing <: Any] => Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.Moore$$anon$14@1f588454
 val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)._2.mkString
 // s: String = "hello WORLD"
 ```
@@ -119,7 +119,8 @@ val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)
 "com.julianpeeters" %% "dynamical-fs2" % "0.0.0"
 ```
 
-The `dynamical-fs2` library provides fs2 integration, in the form of a stream `transducer`:
+The `dynamical-fs2` library provides fs2 integration, in the form of a stream
+`transducer` pipe:
 
 ```scala
 import dynamical.fsm.Mealy
@@ -129,7 +130,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
 
 val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
-// m: Mealy[~>[[_$9 >: Nothing <: Any] => Store[Boolean, _$9], [_$10 >: Nothing <: Any] => Monomial[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.Mealy$$anon$2@58c72188
+// m: Mealy[~>[[_$9 >: Nothing <: Any] => Store[Boolean, _$9], [_$10 >: Nothing <: Any] => Monomial[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.Mealy$$anon$2@602c4b4c
 val l: List[Int] = Stream(1, 2, 3).through(m.transducer).compile.toList
 // l: List[Int] = List(2, 4, 6)
 ```
