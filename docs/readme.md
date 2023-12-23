@@ -3,7 +3,7 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
 
 ### Modules
  - [`dynamical-fsm`](#dynamical-fsm): composable finite state machines
- - [`dynamical-fs2`](#dynamical-fs2): integration with [fs2](https://fs2.io/#/) concurrent streams
+ - [`dynamical-fs2`](#dynamical-fs2): integration with [fs2](https://fs2.io/#/) streams
 
 ## `dynamical-fsm`
  - libarary for Scala @SCALA@ (JS, JVM, and Native platforms)
@@ -79,11 +79,11 @@ val l: List[Int] = List(1, 2, 3).mapAccumulate(m.init)(m.run)._2
 Wirings, in contrast to state systems, are the interface systems that allow us
 to represent interaction patterns.
 
-For example, the composition of a state system with an "wrapper interface" of
+For example, the composition of a state system with an wiring diagram of type
 `((Plant ⊗ Controller) ~> System)[Y]`:
-  - on one hand, it is "filled" (or "loaded") by composition with a tensored state system
-  - on the other hand, it "wraps" a tensored state system in an non-tensored interface
-  - note that there is no delay, since we defined the controller to emit a runnable function
+  - such a wiring can be "filled" (or "loaded") by composition with a state system
+  - `System` can then be said to "wrap" such a state system, as a "wrapper interface"
+  - composition introduces no delay, since we defined the controller to emit a runnable function
 
 ```scala mdoc:reset
 import cats.implicits.given

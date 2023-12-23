@@ -3,7 +3,7 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
 
 ### Modules
  - [`dynamical-fsm`](#dynamical-fsm): composable finite state machines
- - [`dynamical-fs2`](#dynamical-fs2): integration with [fs2](https://fs2.io/#/) concurrent streams
+ - [`dynamical-fs2`](#dynamical-fs2): integration with [fs2](https://fs2.io/#/) streams
 
 ## `dynamical-fsm`
  - libarary for Scala 3 (JS, JVM, and Native platforms)
@@ -80,11 +80,11 @@ val l: List[Int] = List(1, 2, 3).mapAccumulate(m.init)(m.run)._2
 Wirings, in contrast to state systems, are the interface systems that allow us
 to represent interaction patterns.
 
-For example, the composition of a state system with an "wrapper interface" of
+For example, the composition of a state system with an wiring diagram of type
 `((Plant ⊗ Controller) ~> System)[Y]`:
-  - on one hand, it is "filled" (or "loaded") by composition with a tensored state system
-  - on the other hand, it "wraps" a tensored state system in an non-tensored interface
-  - note that there is no delay, since we defined the controller to emit a runnable function
+  - such a wiring can be "filled" (or "loaded") by composition with a state system
+  - `System` can then be said to "wrap" such a state system, as a "wrapper interface"
+  - composition introduces no delay, since we defined the controller to emit a runnable function
 
 ```scala
 import cats.implicits.given
@@ -98,13 +98,13 @@ type Controller[Y] = Monomial[Char, Byte => Char, Y]
 type System[Y]     = Monomial[Byte, Byte => Char, Y]
 type ω[Y] = ((Plant ⊗ Controller) ~> System)[Y]
 val w: Wiring[ω] = Wiring(b => a => b._2(a), (b, a) => ((a, b._2), b._2(a)))
-// w: Wiring[ω] = dynamical.fsm.Wiring$$anon$4@27683333
+// w: Wiring[ω] = dynamical.fsm.Wiring$$anon$4@4700c17b
 val m: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
   (Moore[Char, (Byte, Byte => Char), Char, Nothing](" ".charAt(0), identity, (s, i) => i._2(i._1))
     ⊗ Moore[Byte => Char, Char, Byte => Char, Nothing](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
-// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] => Store[Char, _$5], [_$6 >: Nothing <: Any] => Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.Moore$$anon$18@7e95b5b
+// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] => Store[Char, _$5], [_$6 >: Nothing <: Any] => Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.Moore$$anon$18@483c77a4
 val fsm: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] = m.andThen(w).asMealy
-// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] => Store[Char, _$7], [_$8 >: Nothing <: Any] => Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.Moore$$anon$14@1f588454
+// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] => Store[Char, _$7], [_$8 >: Nothing <: Any] => Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.Moore$$anon$14@1a33a5fd
 val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)._2.mkString
 // s: String = "hello WORLD"
 ```
@@ -130,7 +130,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.{Monomial, Store}
 
 val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
-// m: Mealy[~>[[_$9 >: Nothing <: Any] => Store[Boolean, _$9], [_$10 >: Nothing <: Any] => Monomial[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.Mealy$$anon$2@602c4b4c
+// m: Mealy[~>[[_$9 >: Nothing <: Any] => Store[Boolean, _$9], [_$10 >: Nothing <: Any] => Monomial[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.Mealy$$anon$2@177cee8
 val l: List[Int] = Stream(1, 2, 3).through(m.transducer).compile.toList
 // l: List[Int] = List(2, 4, 6)
 ```
