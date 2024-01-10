@@ -1,29 +1,35 @@
 package dynamical.fsm
 
-import polynomial.morphism.{PolyMap, ~>}
+import polynomial.morphism.{PolyMap}
 import polynomial.`object`.{Binomial, Monomial, Store}
+import polynomial.product.Tensor
 
 object internal:
 
   type Init[P[_], Y] = P[Y] match
-    case PolyMap[Store[s, _], p, Y]             => s
-    case PolyMap[Store[(s1, s2), _] ~> p, q, Y] => (s1, s2)
-    case PolyMap[Store[s, _] ~> p, q, Y]        => s
     case PolyMap[p, q, Y]                       => Init[p, Y]
-    case Store[(s1, s2), Y]                     => (s1, s2)
+    case Store[s, Y]                            => s
+    case Monomial[a, b, Y]                      => b
+    case Tensor[p, q, Y]                        => (Init[p, Y], Init[q, Y]) 
 
   type Readout[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y] => PolyMap.Phi[p, q, Y]
 
+  type Codomain[X] = X match
+    case (Function1[a1, b1], Function1[a2, b2]) => (b1, b2)
+    case Function1[a, b] => b
+
   type Run[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y] => (p[Y], q[Y]) match
-      case (Store[s, Y],                Monomial[a, ? => b, Y]                    ) => (s, a) => (s, b)
-      case (Store[s, Y],                Binomial[a1, ? => b1, a2, ? => b2, Y]     ) => (s, Unify2[a1, a2]) => (s, Unify2[b1, b2])
-      case (Store[s, Y],                PolyMap[p, Monomial[a, ? => b, _], Y]     ) => (s, a) => (s, b)
-      case (Store[(s1, s2), Y],         Monomial[(a1, a2), (? => b1, ? => b2), Y] ) => ((s1, s2), (a1, a2)) => ((s1, s2), (b1, b2))
-      case (PolyMap[Store[s, _], ?, Y], Monomial[a, ? => b, Y]                    ) => (s, a) => (s, b)
-      case (PolyMap[Store[s, _], ?, Y], Binomial[a1, ? => b3, a2, ? => b4, Y]     ) => (s, Unify2[a1, a2]) => (s, Unify2[b3, b4])
-      case (PolyMap[Store[s, _], ?, Y], Monomial[(a1, a2), (? => b1, ? => b2), Y] ) => (s, (a1, a2)) => (s, (b1, b2))
+      case (Store[s, Y],      Binomial[a1, b1, a2, b2, Y]) => (s, Unify2[a1, a2]) => (s, Unify2[Codomain[b1], Codomain[b2]])
+      case (Store[s, Y],      Monomial[a, b, Y])           => (s, a) => (s, Codomain[b])
+      case (Store[s, Y],      PolyMap[p, q, Y])            => Run[PolyMap[Store[s, _], q, _], Y]
+      case (PolyMap[p, q, Y], Binomial[a1, b3, a2, b4, Y]) => Run[PolyMap[p, Binomial[a1, b3, a2, b4, _], _], Y]
+      case (PolyMap[p, q, Y], Monomial[a, b, Y])           => Run[PolyMap[p, Monomial[a, b, _], _], Y]
+      case (PolyMap[o, p, Y], Tensor[q, r, Y])             => Run[PolyMap[o, Tensor.DayConvolution[q, r, _], _], Y]
+      case (Tensor[p, q, Y],  Binomial[a1, b3, a2, b4, Y]) => ((Init[p, Y], Init[q, Y]), Unify2[a1, a2]) => ((Init[p, Y], Init[q, Y]), Unify2[Codomain[b3], Codomain[b4]])
+      case (Tensor[p, q, Y],  Monomial[a, b, Y])           => ((Init[p, Y], Init[q, Y]), a) => ((Init[p, Y], Init[q, Y]), Codomain[b])
+      case (Tensor[o, p, Y],  Tensor[q, r, Y])             => Run[PolyMap[Tensor.DayConvolution[o, p, _], Tensor.DayConvolution[q, r, _], _], Y]
 
   type Update[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y] => PolyMap.PhiSharp[p, q, Y]

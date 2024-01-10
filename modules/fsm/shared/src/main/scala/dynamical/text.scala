@@ -19,8 +19,8 @@ object text:
     Wiring(
       none => _ => none,
       some => _ => some,
-      (none, a1) => _ => none,
-      (some, a2) => _ => some
+      (none, a1) => a1,
+      (_, a2) => a2
     )
   )
 
@@ -54,8 +54,8 @@ object text:
         Wiring(
           none => _ => none,
           some => _ => some,
-          (none, a1) => _ => none,
-          (some, a2) => _ => some
+          (none, a1) => a1,
+          (_, a2) => a2
         )
       )
 

@@ -68,7 +68,7 @@ def moore[Y]: Moore[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] =
     s => x => if s then x + x else x,   // if we've seen x > 1, then emit 2x
     (s, x) => if x > 1 then true else s // change state upon seeing x > 1
   )
-val m: Moore[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = moore.asMealy
+val m: Mealy[Store[Boolean, _] ~> Monomial[Int, Int => Int, _]] = moore.asMealy
 val l: List[Int] = List(1, 2, 3).mapAccumulate(m.init)(m.run)._2
 // l: List[Int] = List(1, 2, 6)
 ```
@@ -79,11 +79,17 @@ val l: List[Int] = List(1, 2, 3).mapAccumulate(m.init)(m.run)._2
 Wirings, in contrast to state systems, are the interface systems that allow us
 to represent interaction patterns.
 
-For example, the composition of a state system with an wiring diagram of type
-`((Plant ⊗ Controller) ~> System)[Y]`:
-  - such a wiring can be "filled" (or "loaded") by composition with a state system
-  - `System` can then be said to "wrap" such a state system, as a "wrapper interface"
-  - composition introduces no delay, since we defined the controller to emit a runnable function
+For example, we could the compose a state system with an wiring diagram of the
+following type:
+
+```scala
+((Plant ⊗ Controller) ~> System)[Y]
+```
+
+There are several aspects to the composition of state systems with wiring diagrams:
+  - such a wiring is said to be "filled" (or "loaded") by composition with a state system
+  - after compisition, `System` is then said to "wrap" such a state system, as a "wrapper interface"
+  - composition introduces no delay into the machine, since we defined the controller to emit a runnable function
 
 ```scala mdoc:reset
 import cats.implicits.given
