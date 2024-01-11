@@ -4,23 +4,23 @@ import cats.implicits.given
 import dynamical.fsm.{Moore, Wiring}
 import dynamical.seq.noneTerminate
 import polynomial.morphism.~>
-import polynomial.`object`.{Binomial, Store}
+import polynomial.`object`.{Binomial, Monomial}
 
 object text:
 
-  def lineReader: Moore[Store[List[String], _] ~> Binomial[Some[String], None.type, None.type, Some[List[String]], _]] =
+  def lineReader: Moore[Monomial.Store[List[String], _] ~> Binomial.Interface[Some[String], None.type, None.type, Some[List[String]], _]] =
     Moore(List.empty[String], _ => None, s => Some(s), (s, i) => s ++ i.value.split("\n"), (s, i) => s)
 
   val wrappedLineReader: Moore[
-    Store[List[String], _] ~>
-      Binomial[Some[String], None.type, None.type, Some[List[String]], _] ~>
-        Binomial[Some[String], Some[String] => None.type, None.type, None.type => Some[List[String]], _]
+    Monomial.Store[List[String], _] ~>
+      Binomial.Interface[Some[String], None.type, None.type, Some[List[String]], _] ~>
+        Binomial.Interface[Some[String], Some[String] => None.type, None.type, None.type => Some[List[String]], _]
   ] = lineReader.andThen(
     Wiring(
       none => _ => none,
       some => _ => some,
-      (none, a1) => _ => none,
-      (some, a2) => _ => some
+      (none, a1) => a1,
+      (_, a2) => a2
     )
   )
 
@@ -36,7 +36,7 @@ object text:
 
   object utf8:
 
-    def decoder: Moore[Store[String, _] ~> Binomial[Some[Byte], None.type, None.type, Some[String], _]] =
+    def decoder: Moore[Monomial.Store[String, _] ~> Binomial.Interface[Some[Byte], None.type, None.type, Some[String], _]] =
       Moore(
         "",
         _ => None,
@@ -46,16 +46,16 @@ object text:
       )
 
     val wrappedDecoder: Moore[
-      Store[String, _] ~>
-        Binomial[Some[Byte], None.type, None.type, Some[String], _] ~>
-          Binomial[Some[Byte], Some[Byte] => None.type, None.type, None.type => Some[String], _]
+      Monomial.Store[String, _] ~>
+        Binomial.Interface[Some[Byte], None.type, None.type, Some[String], _] ~>
+          Binomial.Interface[Some[Byte], Some[Byte] => None.type, None.type, None.type => Some[String], _]
     ] =
       decoder.andThen(
         Wiring(
           none => _ => none,
           some => _ => some,
-          (none, a1) => _ => none,
-          (some, a2) => _ => some
+          (none, a1) => a1,
+          (_, a2) => a2
         )
       )
 
