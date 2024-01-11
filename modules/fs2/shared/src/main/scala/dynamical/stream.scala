@@ -4,9 +4,9 @@ import fs2.Pipe
 import dynamical.fsm.Mealy
 import dynamical.fsm.internal.Unify2
 import polynomial.morphism.~>
-import polynomial.`object`.{Binomial, Monomial, Store}
+import polynomial.`object`.{Binomial, Monomial}
 
-extension [S, A, B] (m: Mealy[Store[S, _] ~> Monomial[A, A => B, _]])
+extension [S, A, B] (m: Mealy[Monomial.Store[S, _] ~> Monomial.Interface[A, A => B, _]])
   @scala.annotation.targetName("transducerStoreToMono")
   def transducer[F[_], Y]: Pipe[F, A, B] =
     stream =>
@@ -14,7 +14,7 @@ extension [S, A, B] (m: Mealy[Store[S, _] ~> Monomial[A, A => B, _]])
         .mapAccumulate(m.init)(m.run)
         .map(_._2)
 
-extension [S, A1, B1, A2, B2] (m: Mealy[Store[S, _] ~> Binomial[A1, A1 => B1, A2, A2 => B2, _]])
+extension [S, A1, B1, A2, B2] (m: Mealy[Monomial.Store[S, _] ~> Binomial.Interface[A1, A1 => B1, A2, A2 => B2, _]])
   @scala.annotation.targetName("transducerStoreToBi")
   def transducer[F[_], Y]: Pipe[F, Unify2[A1, A2], Unify2[B1, B2]] =
     stream =>
