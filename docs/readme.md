@@ -1,5 +1,5 @@
 # dynamical
-Based on the dependent lenses described in [Niu and Spivak](https://topos.site/poly-book.pdf).
+Based on the dependent lenses described in [Niu and Spivak](https://topos.site/poly-book.pdf)test
 
 ### Modules
  - [`dynamical-fsm`](#dynamical-fsm): composable finite state machines
@@ -24,7 +24,7 @@ The mose basic finite state machines are those parameterized by a polymap from
 a store to a monomial:
 
 ```scala mdoc
-import polynomial.`object`.{Monomial, Store}
+import polynomial.`object`.Monomial
 import polynomial.morphism.~>
 import dynamical.fsm.Moore
 
@@ -38,7 +38,7 @@ output `B` to be a function from input to output, `A => B`. For example:
 import cats.implicits.given
 import dynamical.fsm.Moore
 import polynomial.morphism.~>
-import polynomial.`object`.{Monomial, Store}
+import polynomial.`object`.Monomial
 
 def mealified[Y]: Moore[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Int => Int, _]] =
   Moore[Boolean, Int, Int => Int, Y](
@@ -58,9 +58,9 @@ Mealy machines have a dedicated `run` method. A Moore machine forms a Mealy mach
 
 ```scala
 import cats.implicits.given  // for `mapAccumulate`
-import dynamical.fsm.{Moore}
+import dynamical.fsm.{Moore, Mealy}
 import polynomial.morphism.~>
-import polynomial.`object`.{Monomial, Store}
+import polynomial.`object`.Monomial
 
 def moore[Y]: Moore[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Int => Int, _]] =
   Moore[Boolean, Int, Int => Int, Y](
@@ -94,7 +94,7 @@ There are several aspects to the composition of state systems with wiring diagra
 ```scala mdoc:reset
 import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore, Wiring}
-import polynomial.`object`.{Monomial, Store}
+import polynomial.`object`.Monomial
 import polynomial.morphism.~>
 import polynomial.product.⊗
 
@@ -128,7 +128,7 @@ import dynamical.fsm.Mealy
 import dynamical.stream.transducer
 import fs2.Stream
 import polynomial.morphism.~>
-import polynomial.`object`.{Monomial, Store}
+import polynomial.`object`.Monomial
 
 val m: Mealy[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
 val l: List[Int] = Stream(1, 2, 3).through(m.transducer).compile.toList
