@@ -2,9 +2,13 @@ package dynamical.fsm
 
 import polynomial.morphism.PolyMap
 import polynomial.`object`.{Binomial, Monomial}
-import polynomial.product.Tensor
+import polynomial.product.{Composition, Tensor}
 
 object internal:
+
+  type Codomain[X] = X match
+    case (Function1[a1, b1], Function1[a2, b2]) => (b1, b2)
+    case Function1[a, b] => b
 
   type Init[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y]            => Init[p, Y]
@@ -15,14 +19,11 @@ object internal:
   type Readout[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y] => PolyMap.Phi[p, q, Y]
 
-  type Codomain[X] = X match
-    case (Function1[a1, b1], Function1[a2, b2]) => (b1, b2)
-    case Function1[a, b] => b
-
   type Run[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y] => (p[Y], q[Y]) match
       case (Monomial.Store[s, Y], Binomial.Interface[a1, b1, a2, b2, Y]) => (s, Unify2[a1, a2]) => (s, Unify2[Codomain[b1], Codomain[b2]])
       case (Monomial.Store[s, Y], Monomial.Interface[a, b, Y])           => (s, a) => (s, Codomain[b])
+      case (Monomial.Store[s, Y], Composition[p, q, Y])                  => (s, Composition.DecomposeSharp[p, q, Y]) => (s, Codomain[Composition.Decompose[p, q, Y]])
       case (Monomial.Store[s, Y], PolyMap[p, q, Y])                      => Run[PolyMap[Monomial.Store[s, _], q, _], Y]
       case (PolyMap[p, q, Y],     Binomial.Interface[a1, b3, a2, b4, Y]) => Run[PolyMap[p, Binomial.Interface[a1, b3, a2, b4, _], _], Y]
       case (PolyMap[p, q, Y],     Monomial.Interface[a, b, Y])           => Run[PolyMap[p, Monomial.Interface[a, b, _], _], Y]

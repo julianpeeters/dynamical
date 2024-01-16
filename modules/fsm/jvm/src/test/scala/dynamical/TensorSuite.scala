@@ -61,8 +61,8 @@ class TensorSuite extends FunSuite:
     val w: Wiring[ω] = Wiring(b => a => b._2(a), (b, a) => ((a, b._2), b._2(a)))
     val f1: Byte => Char = b => b.toChar
     val f2: Byte => Char = b => b.toChar.toUpper
-    val m1: Moore[Monomial.Store[Char, _] ~> Plant] = Moore(" ".charAt(0), identity, (s, i) => i._2(i._1))
-    val m2: Moore[Monomial.Store[Byte => Char, _] ~> Controller] = Moore(f1, identity, (f, i) => if i != ' ' then f else f2)
+    val m1: Moore[Monomial.Store[Char, _] ~> Plant] = Moore(" ".charAt(0), c => c, (s, i) => i._2(i._1))
+    val m2: Moore[Monomial.Store[Byte => Char, _] ~> Controller] = Moore(f1, c => c, (f, i) => if i != ' ' then f else f2)
     val machine: Mealy[((Monomial.Store[Char, _] ⊗ Monomial.Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] = (m1 ⊗ m2).andThen(w).asMealy
     val obtained: String = "hello world".getBytes().toList.mapAccumulate(machine.init)(machine.run)._2.mkString
     val expected: String = "hello WORLD"
