@@ -6,7 +6,9 @@ import dynamical.fsm.internal.{Init, Readout, Run, Update}
 import dynamical.fsm.run.Runner2
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.{Binomial, Monomial}
-import polynomial.product.⊗
+import polynomial.product.{◁, ⊗}
+import polynomial.`object`.Monomial.Interface
+import polynomial.`object`.Monomial.Store
 
 trait Moore[P[_]]:
   def init[Y]: Init[P, Y]
@@ -22,6 +24,15 @@ object Moore:
     u: (S, A) => S
   ): Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _]] =
     PolyMap[Monomial.Store[S, _], Monomial.Interface[A, B, _], Y](r, u)
+      .asMoore(i)
+
+  @scala.annotation.targetName("applyComposite")
+  def apply[S, A1, B1, A2, B2, Y](
+    i: S,
+    r: (S => B1, B1 => B2),
+    u: (S, (A1, A2)) => S
+  ): Moore[Monomial.Store[S, _] ~> (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, B2, _])] =
+    PolyMap[Monomial.Store[S, _], (Monomial.Interface[A1, B1,_] ◁  Monomial.Interface[A2, B2, _]), Y](r, u)
       .asMoore(i)
   
   def apply[S, A1, B1, A2, B2, Y](
@@ -166,6 +177,17 @@ object Moore:
         def update[Y]: Update[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~> Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _], Y] =
           p.`φ#`
 
+  extension [S, A1, B1, A2, B2, Y] (p: PolyMap[Monomial.Store[S, _], (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, B2, _]), Y])
+    @scala.annotation.targetName("asMooreMonomialStoreCompositeMonomialInterfaceMonomialInterface")
+    def asMoore(i: S): Moore[Monomial.Store[S, _] ~> (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, B2, _])] =
+      new Moore[Monomial.Store[S, _] ~> (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, B2, _])]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[Monomial.Store[S, _] ~> (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, B2, _]), Y] =
+          p.φ
+        def update[Y]: Update[Monomial.Store[S, _] ~> (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, B2, _]), Y] =
+          p.`φ#`
+
   // Lens Composition /////////////////////////////////////////////////////////
   extension [S, A, B, Y] (m: Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _]])
     @scala.annotation.targetName("andThenStoreMonoToMono")
@@ -302,6 +324,7 @@ object Moore:
         def update[Y]: Update[((Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]) ~> (Monomial.Interface[A1, A1 => B1, _] ⊗ Monomial.Interface[A2, A2 => B2, _])), Y] =
           p.update
         def run[Y]: Run[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]) ~> (Monomial.Interface[A1, A1 => B1, _] ⊗ Monomial.Interface[A2, A2 => B2, _]), Y] =
+          // (s, a) => (p.update(s, a), (p.readout(s)._1(a._1), p.readout(s)._2(a._2)))
           (s, a) => (p.update(s, a), (p.readout(s)._1(a._1), p.readout(s)._2(a._2)))
         
   extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (p: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~>  Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]] )
@@ -315,6 +338,20 @@ object Moore:
           p.update
         def run[Y]: Run[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> ((Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _])) ~> (Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]), Y] =
          p.asPolyMap.run
+
+
+  extension [S, A1, B1, A2, B2, Y](m: Moore[Monomial.Store[S, _] ~> (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, A2 => B2, _])])
+    @scala.annotation.targetName("asMealyStoreToMonoCompositeMono")
+    def asMealy: Mealy[Monomial.Store[S, _] ~> (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, A2 => B2, _])] =
+      new Mealy[Monomial.Store[S, _] ~> (Monomial.Interface[A1, B1, _] ◁ Monomial.Interface[A2, A2 => B2, _])]:
+        def init[Y]: Init[(Store[S, _]) ~> ((Interface[A1, B1, _]) ◁ (Interface[A2, A2 => B2, _])), Y] =
+          m.init
+        def readout[Y]: Readout[(Store[S, _]) ~> ((Interface[A1, B1, _]) ◁ (Interface[A2, A2 => B2, _])), Y] =
+          m.readout
+        def update[Y]: Update[(Store[S, _]) ~> ((Interface[A1, B1, _]) ◁ (Interface[A2, A2 => B2, _])), Y] =
+          m.update
+        def run[Y]: Run[(Store[S, _]) ~> ((Interface[A1, B1, _]) ◁ (Interface[A2, A2 => B2, _])), Y] =
+          (s, a) => (m.update(s, a), (m.readout._1(s), m.readout._2(m.readout._1(s))(a._2)))
 
   extension [S, A, B, Y] (m: Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _]])
     @scala.annotation.targetName("asPolyMapStoreToMono")
