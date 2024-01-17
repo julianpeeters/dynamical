@@ -8,13 +8,10 @@ object internal:
 
   type Codomain1[X] = X match
     case Function1[a, b] => b
-    // case (Function1[a1, b1], Function1[a2, b2]) => (b1, b2)
     case (Function1[a1, b1], Function1[a2, b2]) => (b1, b2)
 
   type Codomain2[X] = X match
     case (b1, Function[a2, b2]) => (b1, b2)
-
-    // case (X, Function1[a1, b1]) => (X, b1)
 
   type Init[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y]            => Init[p, Y]
