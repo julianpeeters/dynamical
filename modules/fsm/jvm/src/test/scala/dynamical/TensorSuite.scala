@@ -19,7 +19,7 @@ class TensorSuite extends FunSuite:
     val expected: List[(Int, Int)] = List((2, 22), (4, 44), (6, 66))
     assertEquals(obtained, expected)
 
-  test("mealy tensor product"):
+  test("mealy tensor parallel"):
     val m1: Mealy[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
     val m2: Mealy[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
     val m3: Mealy[(Monomial.Store[Boolean, _]) ⊗ (Monomial.Store[Boolean, _]) ~> (Monomial.Interface[Int, Int => Int, _] ⊗ Monomial.Interface[Int, Int => Int, _])] = m1 ⊗ m2
@@ -51,6 +51,16 @@ class TensorSuite extends FunSuite:
     val r: Mealy[(Monomial.Store[Boolean, _]) ⊗ (Monomial.Store[Boolean, _]) ~> (Monomial.Interface[Int, Int, _] ⊗ Monomial.Interface[Int, Int, _]) ~> Monomial.Interface[Int, Int => Int, _]] = m3.andThen(n1).asMealy
     val obtained: List[Int] = List(1, 2, 3).mapAccumulate(r.init)(r.run)._2
     val expected: List[Int] = List(2, 4, 6)
+    assertEquals(obtained, expected)
+    
+  test("wrapper tensor serial"):
+    val m1: Moore[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Long, _]] = Moore(false, s => if s then 1L else 0L, (s, i) => if i > 1 then true else false)
+    val m2: Moore[Monomial.Store[Boolean, _] ~> Monomial.Interface[Long, String, _]] = Moore(false, s => if s then "true" else "false", (s, i) => if i > 0L then true else false)
+    val m3: Moore[(Monomial.Store[Boolean, _] ⊗ Monomial.Store[Boolean, _]) ~> (Monomial.Interface[Int, Long, _] ⊗ Monomial.Interface[Long, String, _])] = (m1 ⊗ m2)
+    val n1: Wiring[(Monomial.Interface[Int, Long, _] ⊗ Monomial.Interface[Long, String, _]) ~> (Monomial.Interface[Int, Int => String, _])] = Wiring(ba => a => ba._2, (ba, a) => (a, ba._1))
+    val r: Mealy[(Monomial.Store[Boolean, _]) ⊗ (Monomial.Store[Boolean, _]) ~> (Monomial.Interface[Int, Long, _] ⊗ Monomial.Interface[Long, String, _]) ~> Monomial.Interface[Int, Int => String, _]] = m3.andThen(n1).asMealy
+    val obtained: List[String] = List(1, 2, 3, 4).mapAccumulate(r.init)(r.run)._2
+    val expected: List[String] = List("false", "false", "false", "true")
     assertEquals(obtained, expected)
     
   test("wiring"):

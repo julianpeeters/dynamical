@@ -27,14 +27,14 @@ object Wiring:
   ): Wiring[Binomial.Interface[A1, B1, A2, B2, _] ~> Binomial.Interface[A1, A1 => B1, A2, A2 => B2, _]] =
     PolyMap[Binomial.Interface[A1, B1, A2, B2, _], Binomial.Interface[A1, A1 => B1, A2, A2 => B2, _], Y]((r1, r2), (u1, u2)).asWiring
 
-  @scala.annotation.targetName("appTensored1")
-  def apply[A, B, Y](
-    r: ((B, B)) => A => B,
-    u: ((B, B), A) => (A, A)
-  ): Wiring[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _]] =
-    PolyMap[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]), Monomial.Interface[A, A => B, _], Y](r, u).asWiring
-
   @scala.annotation.targetName("appTensored2")
+  def apply[A1, B1, A2, B2, Y](
+    r: ((B1, B2)) => A1 => B2,
+    u: ((B1, B2), A1) => (A1, A2)
+  ): Wiring[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]) ~> Monomial.Interface[A1, A1 => B2, _]] =
+    PolyMap[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Monomial.Interface[A1, A1 => B2, _], Y](r, u).asWiring
+
+  @scala.annotation.targetName("appTensored3")
   def apply[A, B, C, Y](
     r: ((C, B)) => A => C,
     u: ((C, B), A) => ((A, B), C)
@@ -123,17 +123,27 @@ object Wiring:
         def `f#`[Y]: Update[Binomial.Interface[A1, B1, A2, B2, _] ~> Binomial.Interface[A1, A1 => B1, A2, A2 => B2, _], Y] =
           p.`φ#`
 
-  extension [A, B, Y] (p: PolyMap[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]), Monomial.Interface[A, A => B, _], Y])
-    @scala.annotation.targetName("asWiringMonoMonoTensored1")
-    def asWiring: Wiring[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _]] =
-      new Wiring[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _]]:
-        def `f₁`[Y]: Readout[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _], Y] =
+  // extension [A, B, Y] (p: PolyMap[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]), Monomial.Interface[A, A => B, _], Y])
+  //   @scala.annotation.targetName("asWiringMonoMonoTensored1")
+  //   def asWiring: Wiring[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _]] =
+  //     new Wiring[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _]]:
+  //       def `f₁`[Y]: Readout[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _], Y] =
+  //         p.φ
+  //       def `f#`[Y]: Update[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _], Y] =
+  //         p.`φ#`
+
+  extension [A1, B1, A2, B2, Y] (p: PolyMap[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Monomial.Interface[A1, A1 => B2, _], Y])
+    @scala.annotation.targetName("asWiringMonoMonoTensored2")
+    def asWiring: Wiring[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]) ~> Monomial.Interface[A1, A1 => B2, _]] =
+      new Wiring[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]) ~> Monomial.Interface[A1, A1 => B2, _]]:
+        def `f₁`[Y]: Readout[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]) ~> Monomial.Interface[A1, A1 => B2, _], Y] =
           p.φ
-        def `f#`[Y]: Update[(Monomial.Interface[A, B, _] ⊗ Monomial.Interface[A, B, _]) ~> Monomial.Interface[A, A => B, _], Y] =
+        def `f#`[Y]: Update[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]) ~> Monomial.Interface[A1, A1 => B2, _], Y] =
           p.`φ#`
 
+
   extension [A, B, C, Y] (p: PolyMap[(Monomial.Interface[(A, B), C, _] ⊗ Monomial.Interface[C, B, _]), Monomial.Interface[A, A => C, _], Y])
-    @scala.annotation.targetName("asWiringMonoMonoTensored2")
+    @scala.annotation.targetName("asWiringMonoMonoTensored3")
     def asWiring: Wiring[(Monomial.Interface[(A, B), C, _] ⊗ Monomial.Interface[C, B, _]) ~> Monomial.Interface[A, A => C, _]] =
       new Wiring[(Monomial.Interface[(A, B), C, _] ⊗ Monomial.Interface[C, B, _]) ~> Monomial.Interface[A, A => C, _]]:
         def `f₁`[Y]: Readout[(Monomial.Interface[(A, B), C, _] ⊗ Monomial.Interface[C, B, _]) ~> Monomial.Interface[A, A => C, _], Y] =
