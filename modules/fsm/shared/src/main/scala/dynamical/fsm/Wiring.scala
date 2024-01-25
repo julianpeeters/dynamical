@@ -1,10 +1,9 @@
 package dynamical.fsm
 
-import dynamical.fsm.internal.{Readout, Update}
+import dynamical.fsm.methods.types.{Readout, Update}
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.{Binomial, Monomial}
 import polynomial.product.⊗
-// import cats.evidence.Is
 
 trait Wiring[P[_]]:
   def `f₁`[Y]: Readout[P, Y]

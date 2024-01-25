@@ -1,10 +1,10 @@
-package dynamical.fsm
+package dynamical.fsm.methods
 
 import polynomial.morphism.PolyMap
 import polynomial.`object`.{Binomial, Monomial}
 import polynomial.product.{Composition, Tensor}
 
-object internal:
+object types:
 
   type Codomain1[X] = X match
     case Function1[a, b] => b
