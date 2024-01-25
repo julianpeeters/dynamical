@@ -83,11 +83,11 @@ class TensorSuite extends FunSuite:
     type Supplier2[Y] = Monomial.Interface[Unit, Int, Y]
     type Company[Y]   = Monomial.Interface[Int, Boolean, Y]
     type System[Y]    = Monomial.Interface[Unit, Unit => Boolean, Y]
-    val w: Wiring[((Company ⊗ Supplier1 ⊗ Supplier2) ~> System)] = Wiring(b => a => b._1._1, (b, a) => ((if b._1._1 then b._1._2 else b._2, a), a))
-    val m0: Moore[Monomial.Store[Int, _] ~> Company] = Moore(0, s => if s > 2 then false else true, (s, i) =>  s + i) // always accumulate state
+    val w: Wiring[((Company ⊗ Supplier1 ⊗ Supplier2) ~> System)] = Wiring(b => a => b._1._1, (b, a) => ((if b._1._1 then b._2 else b._1._2, a), a))
+    val m0: Moore[Monomial.Store[Int, _] ~> Company] = Moore(0, s => if s > 2 then true else false, (s, i) =>  s + i) // always accumulate state
     val m1: Moore[Monomial.Store[Unit, _] ~> Supplier1] = Moore((), _ => 1, (s, _) => s)                              // emit 1s
     val m2: Moore[Monomial.Store[Unit, _] ~> Supplier2] = Moore((), _ => 0, (s, _) => s)                              // emit 0s
     val mealy: Mealy[(Monomial.Store[Int, _] ⊗ Monomial.Store[Unit, _] ⊗ Monomial.Store[Unit, _]) ~> (Company ⊗ Supplier1 ⊗ Supplier2) ~> System] = (m0 ⊗ m1 ⊗ m2).andThen(w).asMealy
     val obtained: List[Boolean] = List((), (), () ,()).mapAccumulate(mealy.init)(mealy.run)._2 // switch suppliers when stock exceeds 2
-    val expected: List[Boolean] = List(true, true, true, false)
+    val expected: List[Boolean] = List(false, false, false, true)
     assertEquals(obtained, expected)
