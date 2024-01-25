@@ -1,7 +1,7 @@
 package dynamical.fsm
 
 import cats.evidence.Is
-import destructured.CtorOf
+// import destructured.CtorOf
 import dynamical.fsm.internal.{Init, Readout, Run, Update}
 import dynamical.fsm.run.Runner2
 import polynomial.morphism.{PolyMap, ~>}
@@ -109,6 +109,17 @@ object Moore:
         def readout[Y]: Readout[PolyMap[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]), (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), _] ~> Monomial.Interface[A1, B2, _], Y] =
           p.φ
         def update[Y]: Update[PolyMap[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]), (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), _] ~> Monomial.Interface[A1, B2, _], Y] =
+          p.`φ#`
+
+  extension [S1, S2, S3, A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]),  Monomial.Interface[Unit, Unit => Unit, _], Y])
+    @scala.annotation.targetName("asMooreStoreStoreStoreTensorToMonoMonoMonoTensorToMono")
+    def asMoore(i: ((S1, S2), S3)): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~>  Monomial.Interface[Unit, Unit => Unit, _]] =
+      new Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~>  Monomial.Interface[Unit, Unit => Unit, _]]:
+        def init[Y]: Init[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _], Y] =
+          i
+        def readout[Y]: Readout[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _], Y] =
+          p.φ
+        def update[Y]: Update[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _], Y] =
           p.`φ#`
 
   extension [S1, S2, A1, B1, A2, B2, Y] (p: PolyMap[PolyMap[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]), (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), _], Monomial.Interface[A1, B1, _], Y])
@@ -219,7 +230,6 @@ object Moore:
     ): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[(A, B), C, _] ⊗ Monomial.Interface[C, B, _]) ~> Monomial.Interface[A, A => C, _]] =
        m.asPolyMap.andThen(w.asPolyMap).asMoore(m.init)
                                         
-
   extension [S1, S2, A1, B1, A2, B2, Y] (m: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _])])
     @scala.annotation.targetName("andThenStoreStoreTensorMonoMonoTensorToMono2")
     def andThen(
@@ -246,18 +256,33 @@ object Moore:
        .andThen(w.asPolyMap)
        .asMoore(m.init)
 
+  extension [S1, S2, S3, A1, B1, A2, B2, A3, B3, Y] (m: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _])])
+    @scala.annotation.targetName("andThenStoreStoreTensorBiBiTensorToBi")
+    def andThen(
+      w: Wiring[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~>  Monomial.Interface[Unit, Unit => Unit, _]]
+    )(using
+      F: Is[S1, A1],
+      G: Is[S2, A2],
+      H: Is[S3, A3],
+    ): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _]] =
+      m.asPolyMap
+       .andThen(w.asPolyMap, F.coerce, G.coerce, H.coerce)
+       .asMoore(m.init)
+
   extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (m: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _])])
     @scala.annotation.targetName("andThenStoreStoreTensorBiBiTensorToBi")
     def andThen(
       w: Wiring[(Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~>  Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]]
-    )(using
-      C: CtorOf[S1, A4],
-      H: Is[B1, A3],
-      I: Is[B2, A4],
-      V: CtorOf[S2, A3]
-    ): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~>  Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]] =
+    )
+    // (using
+    //   C: CtorOf[S1, A4],
+    //   H: Is[B1, A3],
+    //   I: Is[B2, A4],
+    //   V: CtorOf[S2, A3]
+    // )
+    : Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~>  Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]] =
       m.asPolyMap
-       .andThen(w.asPolyMap, V.apply, C.apply, H.coerce, I.coerce)
+       .andThen(w.asPolyMap)//, V.apply, C.apply, H.coerce, I.coerce)
        .asMoore(m.init)
 
   // Conversions //////////////////////////////////////////////////////////////
@@ -326,6 +351,18 @@ object Moore:
         def run[Y]: Run[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]) ~> (Monomial.Interface[A1, A1 => B1, _] ⊗ Monomial.Interface[A2, A2 => B2, _]), Y] =
           (s, a) => (p.update(s, a), (p.readout(s)._1(a._1), p.readout(s)._2(a._2)))
         
+  extension [S1, S2, S3, A1, B1, A2, B2, A3, B3, A4, B4, Y] (p: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _]])
+    def asMealy: Mealy[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _]] =
+      new Mealy[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _]]:
+        def init[Y]: Init[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _], Y] =
+          p.init
+        def readout[Y]: Readout[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _], Y] =
+          p.readout
+        def update[Y]: Update[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _], Y] =
+          p.update
+        def run[Y]: Run[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _], Y] =
+          (s, a) => (p.update(s, a), p.readout(s)(a))
+
   extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (p: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~>  Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]] )
     def asMealy(using R: Runner2[((Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~>  Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]), (S1, S2), A1, B3, A2, B4]): Mealy[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~>  Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]] =
       new Mealy[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]) ~>  Binomial.Interface[A1, A1 => B3, A2, A2 => B4, _]]:
@@ -366,6 +403,11 @@ object Moore:
     def asPolyMap: PolyMap[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]), (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Y] =
       PolyMap(m.readout, m.update)
 
+  extension [S1, S2, S3, A1, B1, A2, B2, A3, B3, Y] (m: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _])])
+    @scala.annotation.targetName("asPolyMapStoreTensoredToMonoMonoMonoTensored")
+    def asPolyMap: PolyMap[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]), (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]), Y] =
+      PolyMap(m.readout, m.update)
+
   extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (m: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _])])
     @scala.annotation.targetName("asPolyMapStoreTensoredToBiBiTensored")
     def asPolyMap: PolyMap[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]), (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _]), Y] =
@@ -379,13 +421,28 @@ object Moore:
   // Product //////////////////////////////////////////////////////////////////
   extension [S1, S2, A1, B1, A2, B2, Y] (m1: Moore[Monomial.Store[S1, _] ~> Monomial.Interface[A1, B1, _]])
     @scala.annotation.targetName("tensorStoreMonoXStoreMono")
-    def ⊗(m2: Moore[Monomial.Store[S2, _] ~> Monomial.Interface[A2, B2, _]]): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _])] =
-      new Moore[(Monomial.Store[S1, _]) ⊗ (Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _])]:
-        def init[Y]: Init[(Monomial.Store[S1, _]) ⊗ (Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Y] =
+    def ⊗(
+      m2: Moore[Monomial.Store[S2, _] ~> Monomial.Interface[A2, B2, _]]
+    ): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _])] =
+      new Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _])]:
+        def init[Y]: Init[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Y] =
           (m1.init, m2.init)
-        def readout[Y]: Readout[(Monomial.Store[S1, _]) ⊗ (Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Y] =
+        def readout[Y]: Readout[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Y] =
           (s1, s2) => (m1.readout(s1), m2.readout(s2))
-        def update[Y]: Update[(Monomial.Store[S1, _]) ⊗ (Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Y] =
+        def update[Y]: Update[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _]), Y] =
+          (s, a) => (m1.update(s._1, a._1), m2.update(s._2, a._2))
+
+  extension [S1, S2, S3, A1, B1, A2, B2, A3, B3, Y] (m1: Moore[(Monomial.Store[S1, _]) ⊗ (Monomial.Store[S2, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _])])
+    @scala.annotation.targetName("tensorStoreMonoXStoreMonoXStoreMono")
+    def ⊗(
+      m2: Moore[Monomial.Store[S3, _] ~> Monomial.Interface[A3, B3, _]]
+    ): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _])] =
+      new Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _])]:
+        def init[Y]: Init[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]), Y] =
+          (m1.init, m2.init)
+        def readout[Y]: Readout[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]), Y] =
+          (s1, s2) => (m1.readout(s1), m2.readout(s2))
+        def update[Y]: Update[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]), Y] =
           (s, a) => (m1.update(s._1, a._1), m2.update(s._2, a._2))
 
   extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (m1: Moore[Monomial.Store[S1, _] ~> Binomial.Interface[A1, B1, A2, B2, _]])

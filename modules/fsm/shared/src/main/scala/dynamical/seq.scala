@@ -9,3 +9,6 @@ extension [A] (as: Seq[A])
 
   def noneTerminate: Seq[Option[A]] =
     as.map(v => Some(v)) :+ None
+
+  def noneTerminate2: Seq[Option[A]] =
+    as.map(v => Some(v)) :+ None :+ None

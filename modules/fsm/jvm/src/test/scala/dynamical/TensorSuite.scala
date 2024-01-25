@@ -77,3 +77,17 @@ class TensorSuite extends FunSuite:
     val obtained: String = "hello world".getBytes().toList.mapAccumulate(machine.init)(machine.run)._2.mkString
     val expected: String = "hello WORLD"
     assertEquals(obtained, expected)
+
+  test("mode-dependent wiring"):
+    type Supplier1[Y] = Monomial.Interface[Unit, Int, Y]
+    type Supplier2[Y] = Monomial.Interface[Unit, Int, Y]
+    type Company[Y]   = Monomial.Interface[Int, Boolean, Y]
+    type System[Y]    = Monomial.Interface[Unit, Unit => Unit, Y]
+    val w: Wiring[((Company ⊗ Supplier1 ⊗ Supplier2) ~> System)] = Wiring(b => a => a, (b, a) => ((if b._1._1 then b._1._2 else b._2, a), a))
+    val m0: Moore[Monomial.Store[Int, _] ~> Company] = Moore(0, s => if s > 2 then false else true, (s, i) =>  s + i) // accumulate state
+    val m1: Moore[Monomial.Store[Unit, _] ~> Supplier1] = Moore((), _ => 1, (s, _) => s)                              // emit 1s
+    val m2: Moore[Monomial.Store[Unit, _] ~> Supplier2] = Moore((), _ => 0, (s, _) => s)                              // emit 0s
+    val mealy: Mealy[(Monomial.Store[Int, _] ⊗ Monomial.Store[Unit, _] ⊗ Monomial.Store[Unit, _]) ~> (Company ⊗ Supplier1 ⊗ Supplier2) ~> System] = (m0 ⊗ m1 ⊗ m2).andThen(w).asMealy
+    val obtained: List[Unit] = List((), (), (), (), (), ()).mapAccumulate(mealy.init)(mealy.run)._2
+    val expected: List[Unit] = List((), (), (), (), (), ())
+    assertEquals(obtained, expected)
