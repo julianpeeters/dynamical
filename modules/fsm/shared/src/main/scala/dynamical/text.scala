@@ -2,6 +2,7 @@ package dynamical
 
 import cats.implicits.given
 import dynamical.fsm.{Moore, Wiring}
+import dynamical.fsm.methods.moore.andThen.andThen
 import dynamical.seq.noneTerminate
 import polynomial.morphism.~>
 import polynomial.`object`.{Binomial, Monomial}

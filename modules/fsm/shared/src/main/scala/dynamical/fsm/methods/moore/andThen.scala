@@ -1,6 +1,5 @@
 package dynamical.fsm.methods.moore
 
-import cats.evidence.Is
 import dynamical.fsm.{Moore, Wiring}
 import dynamical.fsm.methods.polymap.asMoore.asMoore
 import polynomial.morphism.{PolyMap, ~>}
@@ -66,16 +65,12 @@ object andThen:
        .asMoore(m.init)
 
   extension [S1, S2, S3, A1, B1, A2, B2, A3, B3, Y] (m: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _])])
-    @scala.annotation.targetName("andThenStoreStoreTensorBiBiTensorToBi")
-    def andThen(
-      w: Wiring[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~>  Monomial.Interface[Unit, Unit => Unit, _]]
-    )(using
-      F: Is[S1, A1],
-      G: Is[S2, A2],
-      H: Is[S3, A3],
-    ): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[Unit, Unit => Unit, _]] =
+    @scala.annotation.targetName("andThenStoreStoreStoreTensorMonoMonoMnooTensorToMono")
+    def andThen[I, O](
+      w: Wiring[(Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~>  Monomial.Interface[I, I => O, _]]
+    ): Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _] ⊗ Monomial.Store[S3, _]) ~> (Monomial.Interface[A1, B1, _] ⊗ Monomial.Interface[A2, B2, _] ⊗ Monomial.Interface[A3, B3, _]) ~> Monomial.Interface[I, I => O, _]] =
       m.asPolyMap
-       .andThen(w.asPolyMap, F.coerce, G.coerce, H.coerce)
+       .andThen(w.asPolyMap)
        .asMoore(m.init)
 
   extension [S1, S2, A1, B1, A2, B2, A3, B3, A4, B4, Y] (m: Moore[(Monomial.Store[S1, _] ⊗ Monomial.Store[S2, _]) ~> (Binomial.Interface[A1, B1, A2, B2, _] ⊗ Binomial.Interface[A3, B3, A4, B4, _])])

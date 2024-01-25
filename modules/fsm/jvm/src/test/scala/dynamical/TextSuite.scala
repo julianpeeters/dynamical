@@ -21,7 +21,6 @@ class TextSuite extends FunSuite:
     val expected: Seq[String] = Seq("hello", "world")
     assertEquals(obtained, expected)
 
-
   test("text tensor"):
     val machine = (text.utf8.decoder ⊗ text.lineReader.swapInterfacePos).andThen(Wiring.serially).asMealy
     val obtained = "hello\ngoodbye".getBytes().toList.noneTerminate2.mapAccumulate(machine.init)(machine.run)._2
