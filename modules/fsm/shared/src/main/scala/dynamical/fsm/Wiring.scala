@@ -1,5 +1,6 @@
 package dynamical.fsm
 
+import cats.Id
 import dynamical.fsm.methods.types.{Readout, Update}
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.{Binomial, Monomial}
@@ -11,12 +12,20 @@ trait Wiring[P[_]]:
 
 object Wiring:
 
-  @scala.annotation.targetName("appMono")
-  def apply[A, B, Y](
-    r: B => A => B,
+  // @scala.annotation.targetName("appMono")
+  // def apply[A, B, Y](
+  //   r: B => A => B,
+  //   u: (B, A) => A
+  // ): Wiring[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _]] =
+  //   PolyMap[Monomial.Interface[A, B, _], Monomial.Interface[A, A => B, _], Y](r, u).asWiring
+
+  @scala.annotation.targetName("appMonF")
+  def apply[F[_], A, B, Y](
+    r: B => A => F[B],
     u: (B, A) => A
-  ): Wiring[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _]] =
-    PolyMap[Monomial.Interface[A, B, _], Monomial.Interface[A, A => B, _], Y](r, u).asWiring
+  ): Wiring[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => F[B], _]] =
+    PolyMap[Monomial.Interface[A, B, _], Monomial.Interface[A, A => F[B], _], Y](r, u).asWiring
+
 
   @scala.annotation.targetName("appBi")
   def apply[A1, B1, A2, B2, Y](
@@ -69,8 +78,14 @@ object Wiring:
       )
     ).asWiring
 
-  extension [A, B, Y] (w: Wiring[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _]])
-    def asPolyMap: PolyMap[Monomial.Interface[A, B, _], Monomial.Interface[A, A => B, _], Y] =
+  extension [A, B, Y] (w: Wiring[Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Id[B], _]])
+    @scala.annotation.targetName("asPolyMapWiringMonoMono")
+    def asPolyMap: PolyMap[Monomial.Interface[A, Id[B], _], Monomial.Interface[A, A => Id[B], _], Y] =
+      PolyMap(w.`f₁`, w.`f#`)
+
+  extension [A, B, Y] (w: Wiring[Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Option[B], _]])
+    @scala.annotation.targetName("asPolyMapWiringMonoMonoPrism")
+    def asPolyMap: PolyMap[Monomial.Interface[A, Id[B], _], Monomial.Interface[A, A => Option[B], _], Y] =
       PolyMap(w.`f₁`, w.`f#`)
 
   extension [A1, B1, A2, B2, Y] (w: Wiring[(Binomial.Interface[A1, B1, A2, B2, _]) ~> (Binomial.Interface[A1, A1 => B1, A2, A2 => B2, _])])
@@ -125,6 +140,15 @@ object Wiring:
         def `f₁`[Y]: Readout[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _], Y] =
           p.φ
         def `f#`[Y]: Update[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _], Y] =
+          p.`φ#`
+
+  extension [F[_], A, B, Y] (p: PolyMap[Monomial.Interface[A, B, _], Monomial.Interface[A, A => F[B], _], Y])
+    @scala.annotation.targetName("asWiringMonoMonoF")
+    def asWiring: Wiring[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => F[B], _]] =
+      new Wiring[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => F[B], _]]:
+        def `f₁`[Y]: Readout[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => F[B], _], Y] =
+          p.φ
+        def `f#`[Y]: Update[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => F[B], _], Y] =
           p.`φ#`
 
   extension [A1, B1, A2, B2, Y] (p: PolyMap[Binomial.Interface[A1, B1, A2, B2, _], Binomial.Interface[A1, A1 => B1, A2, A2 => B2, _], Y])

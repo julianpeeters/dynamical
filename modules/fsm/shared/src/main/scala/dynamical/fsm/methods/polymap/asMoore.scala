@@ -1,5 +1,6 @@
 package dynamical.fsm.methods.polymap
 
+import cats.Id
 import dynamical.fsm.methods.types.{Init, Readout, Update}
 import dynamical.fsm.Moore
 import polynomial.morphism.{PolyMap, ~>}
@@ -8,15 +9,15 @@ import polynomial.product.{◁, ⊗}
 
 object asMoore:
 
-  extension [S, A, B, Y] (p: PolyMap[Monomial.Store[S, _], Monomial.Interface[A, B, _], Y])
+  extension [S, A, B, Y] (p: PolyMap[Monomial.Store[Id[S], _], Monomial.Interface[A, Id[B], _], Y])
     @scala.annotation.targetName("asMooreStoreToMono")
-    def asMoore(i: S): Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _]] =
-      new Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _]]:
-        def init[Y]: Init[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _], Y] =
+    def asMoore(i: S): Moore[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _]] =
+      new Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, Id[B], _]]:
+        def init[Y]: Init[Monomial.Store[S, _] ~> Monomial.Interface[A, Id[B], _], Y] =
           i
-        def readout[Y]: Readout[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _], Y] =
+        def readout[Y]: Readout[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _], Y] =
           p.φ
-        def update[Y]: Update[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _], Y] =
+        def update[Y]: Update[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _], Y] =
           p.`φ#`
 
   extension [S, A1, B1, A2, B2, Y] (p: PolyMap[Monomial.Store[S, _], Binomial.Interface[A1, B1, A2, B2, _], Y])
@@ -30,15 +31,27 @@ object asMoore:
         def update[Y]: Update[Monomial.Store[S, _] ~> Binomial.Interface[A1, B1, A2, B2, _], Y] =
           p.`φ#`
 
-  extension [S, A, B, Y] (p: PolyMap[PolyMap[Monomial.Store[S, _], Monomial.Interface[A, B, _], _], Monomial.Interface[A, A => B, _], Y])
+  extension [S, A, B, Y] (p: PolyMap[PolyMap[Monomial.Store[Id[S], _], Monomial.Interface[A, Id[B], _], _], Monomial.Interface[A, A => Id[B], _], Y])
     @scala.annotation.targetName("asMooreStoreToMonoToMono")
-    def asMoore(i: S): Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _]] =
-      new Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _]]:
-        def init[Y]: Init[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _], Y] =
+    def asMoore(i: S): Moore[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Id[B], _]] =
+      new Moore[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Id[B], _]]:
+        def init[Y]: Init[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Id[B], _], Y] =
           i
-        def readout[Y]: Readout[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _], Y] =
+        def readout[Y]: Readout[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Id[B], _], Y] =
           p.φ
-        def update[Y]: Update[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _], Y] =
+        def update[Y]: Update[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Id[B], _], Y] =
+          p.`φ#`
+
+  
+  extension [S, A, B, Y] (p: PolyMap[PolyMap[Monomial.Store[Option[S], _], Monomial.Interface[A, Id[B], _], _], Monomial.Interface[A, A => Option[B], _], Y])
+    @scala.annotation.targetName("asMooreStoreToMonoToMonoPrism")
+    def asMoore(i: Option[S]): Moore[Monomial.Store[Option[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Option[B], _]] =
+      new Moore[Monomial.Store[Option[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Option[B], _]]:
+        def init[Y]: Init[Monomial.Store[Option[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Option[B], _], Y] =
+          i
+        def readout[Y]: Readout[Monomial.Store[Option[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Option[B], _], Y] =
+          p.φ
+        def update[Y]: Update[Monomial.Store[Option[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Option[B], _], Y] =
           p.`φ#`
 
   extension [S1, S2, A1, B1, A2, B2, Y] (p: PolyMap[PolyMap[Monomial.Store[(S1, S2), _], Monomial.Interface[(A1, A2), (B1, B2), _], _ ], Monomial.Interface[(A1, A2), (A1 => B1, A2 => B2), _], Y ])

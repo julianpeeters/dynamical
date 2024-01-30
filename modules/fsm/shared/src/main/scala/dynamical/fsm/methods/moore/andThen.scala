@@ -1,5 +1,6 @@
 package dynamical.fsm.methods.moore
 
+import cats.Id
 import dynamical.fsm.{Moore, Wiring}
 import dynamical.fsm.methods.polymap.asMoore.asMoore
 import polynomial.morphism.{PolyMap, ~>}
@@ -8,14 +9,25 @@ import polynomial.product.⊗
 
 object andThen:
 
-  extension [S, A, B, Y] (m: Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _]])
+  extension [S, A, B, Y] (m: Moore[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _]])
     @scala.annotation.targetName("andThenStoreMonoToMono")
     def andThen(
-      w: Wiring[Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _]]
-    ): Moore[Monomial.Store[S, _] ~> Monomial.Interface[A, B, _] ~> Monomial.Interface[A, A => B, _]] =
+      w: Wiring[Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Id[B], _]]
+    ): Moore[Monomial.Store[Id[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Id[B], _]] =
       m.asPolyMap
        .andThen(w.asPolyMap)
        .asMoore(m.init)
+
+  extension [S, A, B, Y] (m: Moore[Monomial.Store[Option[S], _] ~> Monomial.Interface[A, Option[B], _]])
+    @scala.annotation.targetName("andThenStoreMonoToMonoF")
+    def andThen(
+      w: Wiring[Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Option[B], _]]
+    ): Moore[Monomial.Store[Option[S], _] ~> Monomial.Interface[A, Id[B], _] ~> Monomial.Interface[A, A => Option[B], _]] =
+      m.asPolyMap
+       .andThen(w.asPolyMap)
+       .asMoore(m.init)
+    
+       
 
   extension [S, A1, B1, A2, B2, Y] (m: Moore[Monomial.Store[S, _] ~> Binomial.Interface[A1, B1, A2, B2, _]])
     @scala.annotation.targetName("andThenStoreBiToBi")
