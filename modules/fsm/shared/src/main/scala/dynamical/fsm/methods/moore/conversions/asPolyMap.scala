@@ -1,4 +1,4 @@
-package dynamical.fsm.methods.moore
+package dynamical.fsm.methods.moore.conversions
 
 import dynamical.fsm.Moore
 import polynomial.morphism.{PolyMap, ~>}

@@ -27,8 +27,6 @@ object andThen:
        .andThen(w.asPolyMap)
        .asMoore(m.init)
     
-       
-
   extension [S, A1, B1, A2, B2, Y] (m: Moore[Monomial.Store[S, _] ~> Binomial.Interface[A1, B1, A2, B2, _]])
     @scala.annotation.targetName("andThenStoreBiToBi")
     def andThen(

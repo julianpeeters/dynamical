@@ -6,7 +6,6 @@ import dynamical.fsm.methods.polymap.asMealy.asMealy
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.{Binomial, Monomial}
 
-
 trait Mealy[P[_]] extends Moore[P]:
   def run[Y]: Run[P, Y]
 
