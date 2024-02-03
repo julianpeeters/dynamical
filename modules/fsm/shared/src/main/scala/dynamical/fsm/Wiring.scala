@@ -16,7 +16,7 @@ object Wiring:
   export dynamical.fsm.methods.wiring.product.tensor.*
   export dynamical.fsm.methods.wiring.asPolyMap.*
 
-  @scala.annotation.targetName("appMono")
+  @scala.annotation.targetName("appMonoF")
   def apply[F[_], A, B, Y](
     r: B => A => F[B],
     u: (B, A) => A

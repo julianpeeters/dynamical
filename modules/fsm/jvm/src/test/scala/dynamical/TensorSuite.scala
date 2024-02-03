@@ -29,9 +29,9 @@ class TensorSuite extends FunSuite:
     assertEquals(obtained, expected)
 
   test("wrapper tensor product"):
-    val w1: Wiring[Monomial.Interface[Int, Id[Int], _] ~> Monomial.Interface[Int, Int => Id[Int], _]] = Wiring(i => j => j + j, (i1, i2) => i2)
-    val w2: Wiring[Monomial.Interface[Int, Id[Int], _] ~> Monomial.Interface[Int, Int => Id[Int], _]] = Wiring(i => j => j + j, (i1, i2) => i2)
-    val w3: Wiring[(Monomial.Interface[Int, Id[Int], _]) ⊗ (Monomial.Interface[Int, Id[Int], _]) ~> (Monomial.Interface[Int, Int => Int, _] ⊗ Monomial.Interface[Int, Int => Int, _])] = w1 ⊗ w2
+    def w1[Y]: Wiring[Monomial.Interface[Int, Int, _] ~> Monomial.Interface[Int, Int => Int, _]] = Wiring[Id, Int, Int, Y](i => j => j + j, (i1, i2) => i2)
+    def w2[Y]: Wiring[Monomial.Interface[Int, Int, _] ~> Monomial.Interface[Int, Int => Int, _]] = Wiring[Id, Int, Int, Y](i => j => j + j, (i1, i2) => i2)
+    val w3: Wiring[(Monomial.Interface[Int, Int, _]) ⊗ (Monomial.Interface[Int, Int, _]) ~> (Monomial.Interface[Int, Int => Int, _] ⊗ Monomial.Interface[Int, Int => Int, _])] = w1 ⊗ w2
     val m1: Moore[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
     val m2: Moore[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
     val m3: Moore[(Monomial.Store[Boolean, _]) ⊗ (Monomial.Store[Boolean, _]) ~> (Monomial.Interface[Int, Int, _] ⊗ Monomial.Interface[Int, Int, _])] = (m1 ⊗ m2)
