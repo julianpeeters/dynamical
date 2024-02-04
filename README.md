@@ -92,6 +92,7 @@ There are several aspects to the composition of state systems with wiring diagra
 import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore, Wiring}
 import polynomial.`object`.Monomial
+import polynomial.`object`.Monomial.Store
 import polynomial.morphism.~>
 import polynomial.product.⊗
 
@@ -100,19 +101,30 @@ type Controller[Y] = Monomial.Interface[Char, Byte => Char, Y]
 type System[Y]     = Monomial.Interface[Byte, Byte => Char, Y]
 type ω[Y] = ((Plant ⊗ Controller) ~> System)[Y]
 
-val w: Wiring[ω] = Wiring(b => a => b._2(a), (b, a) => ((a, b._2), b._2(a)))
-// w: Wiring[ω] = dynamical.fsm.Wiring$$anon$5@6a6ac8c2
+val w: Wiring[ω] = Wiring(
+  b => a => b._2(a),
+  (b, a) => ((a, b._2), b._2(a))
+)
+// w: Wiring[ω] = dynamical.fsm.methods.polymap.asWiring$$anon$6@5d58a18a
 
-val m: Moore[(Monomial.Store[Char, _] ⊗ Monomial.Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
+val m: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
   (Moore[Char, (Byte, Byte => Char), Char, Nothing](" ".charAt(0), identity, (s, i) => i._2(i._1))
     ⊗ Moore[Byte => Char, Char, Byte => Char, Nothing](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
-// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] => Store[Char, _$5], [_$6 >: Nothing <: Any] => Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.methods.moore.product.tensor$$anon$1@4b2a3393
+// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] => Store[Char, _$5], [_$6 >: Nothing <: Any] => Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.methods.moore.product.tensor$$anon$1@469083ba
 
-val fsm: Mealy[((Monomial.Store[Char, _] ⊗ Monomial.Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] = m.andThen(w).asMealy
-// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] => Store[Char, _$7], [_$8 >: Nothing <: Any] => Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.Moore$$anon$3@5b02d761
+val fsm: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] =
+  m.andThen(w).asMealy
+// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] => Store[Char, _$7], [_$8 >: Nothing <: Any] => Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.methods.moore.conversions.asMealy$$anon$3@15b1ee9d
 
-val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)._2.mkString
-// s: String = "hello WORLD"
+val input = "hello world".getBytes().toList
+// input: List[Byte] = List(
+//   104,
+//   101,
+//   108,
+// ...
+
+val result: String = input.mapAccumulate(fsm.init)(fsm.run)._2.mkString
+// result: String = "hello WORLD"
 ```
 
 (Note: example adapted from [Niu and Spivak](https://topos.site/poly-book.pdf))
@@ -136,7 +148,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.Monomial
 
 val m: Mealy[Monomial.Store[Boolean, _] ~> Monomial.Interface[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
-// m: Mealy[~>[[_$9 >: Nothing <: Any] => Store[Boolean, _$9], [_$10 >: Nothing <: Any] => Interface[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.methods.polymap.asMealy$$anon$1@73114d06
+// m: Mealy[~>[[_$9 >: Nothing <: Any] => Store[Boolean, _$9], [_$10 >: Nothing <: Any] => Interface[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.methods.polymap.asMealy$$anon$1@3b4b6f8f
 
 val l: List[Int] = Stream(1, 2, 3).through(m.transducer).compile.toList
 // l: List[Int] = List(2, 4, 6)

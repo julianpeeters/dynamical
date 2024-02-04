@@ -87,10 +87,11 @@ There are several aspects to the composition of state systems with wiring diagra
   - after composition, `System` is then said to "wrap" such a state system, as a "wrapper interface"
   - composition introduces no delay into the machine, since we defined the controller to emit a runnable function
 
-```scala mdoc:reset
+```scala mdoc:reset:height=5
 import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore, Wiring}
 import polynomial.`object`.Monomial
+import polynomial.`object`.Monomial.Store
 import polynomial.morphism.~>
 import polynomial.product.⊗
 
@@ -99,15 +100,21 @@ type Controller[Y] = Monomial.Interface[Char, Byte => Char, Y]
 type System[Y]     = Monomial.Interface[Byte, Byte => Char, Y]
 type ω[Y] = ((Plant ⊗ Controller) ~> System)[Y]
 
-val w: Wiring[ω] = Wiring(b => a => b._2(a), (b, a) => ((a, b._2), b._2(a)))
+val w: Wiring[ω] = Wiring(
+  b => a => b._2(a),
+  (b, a) => ((a, b._2), b._2(a))
+)
 
-val m: Moore[(Monomial.Store[Char, _] ⊗ Monomial.Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
+val m: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
   (Moore[Char, (Byte, Byte => Char), Char, Nothing](" ".charAt(0), identity, (s, i) => i._2(i._1))
     ⊗ Moore[Byte => Char, Char, Byte => Char, Nothing](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
 
-val fsm: Mealy[((Monomial.Store[Char, _] ⊗ Monomial.Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] = m.andThen(w).asMealy
+val fsm: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] =
+  m.andThen(w).asMealy
 
-val s: String = "hello world".getBytes().toList.mapAccumulate(fsm.init)(fsm.run)._2.mkString
+val input = "hello world".getBytes().toList
+
+val result: String = input.mapAccumulate(fsm.init)(fsm.run)._2.mkString
 ```
 
 (Note: example adapted from [Niu and Spivak](https://topos.site/poly-book.pdf))
