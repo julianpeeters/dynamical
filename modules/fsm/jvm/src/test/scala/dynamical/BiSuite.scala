@@ -5,7 +5,7 @@ import dynamical.fsm.{Mealy, Moore}
 import munit.FunSuite
 import polynomial.morphism.~>
 import polynomial.`object`.Binomial.BiInterface
-import polynomial.`object`.Monomial.{Interface, Store}
+import polynomial.`object`.Monomial.Store
 
 class BiSuite extends FunSuite:
 

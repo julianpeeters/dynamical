@@ -5,7 +5,7 @@ import dynamical.stream.transducer
 import fs2.Stream
 import munit.FunSuite
 import polynomial.morphism.~>
-import polynomial.`object`.Mono
+import polynomial.`object`.Monomial.{Interface, Store}
 
 class fs2Suite extends FunSuite:
 

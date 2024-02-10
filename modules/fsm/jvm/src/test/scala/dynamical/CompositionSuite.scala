@@ -4,7 +4,7 @@ import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore}
 import munit.FunSuite
 import polynomial.morphism.~>
-import polynomial.`object`.Mono
+import polynomial.`object`.Monomial.{Interface, Store}
 import polynomial.product.◁
 
 class CompositionSuite extends FunSuite:
