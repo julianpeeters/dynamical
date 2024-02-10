@@ -10,7 +10,7 @@ import polynomial.product.◁
 class CompositionSuite extends FunSuite:
 
   test("mealy composition product"):
-    type P[Y] = (Mono.Store[Boolean, _] ~> (Mono.Interface[Int, Int, _] ◁ Mono.Interface[String, String => String, _]))[Y]
+    type P[Y] = (Store[Boolean, _] ~> (Interface[Int, Int, _] ◁ Interface[String, String => String, _]))[Y]
     val n: Moore[P] =
       Moore(
         i = false,

@@ -3,16 +3,16 @@ package dynamical.fsm.methods.wiring.product
 import dynamical.fsm.methods.types.{Readout, Update}
 import dynamical.fsm.Wiring
 import polynomial.morphism.~>
-import polynomial.`object`.Mono
+import polynomial.`object`.Monomial.Interface
 import polynomial.product.⊗
 
 object tensor:
     
-  extension [A1, B1, A2, B2, A3, B3, A4, B4, Y] (w1: Wiring[Mono.Interface[A1, B1, _] ~> Mono.Interface[A2, B2, _]])
+  extension [A1, B1, A2, B2, A3, B3, A4, B4, Y] (w1: Wiring[Interface[A1, B1, _] ~> Interface[A2, B2, _]])
     @scala.annotation.targetName("tensor1")
-    def ⊗(w2: Wiring[Mono.Interface[A3, B3, _] ~> Mono.Interface[A4, B4, _]]): Wiring[(Mono.Interface[A1, B1, _]) ⊗ (Mono.Interface[A3, B3, _]) ~> (Mono.Interface[A2, B2, _] ⊗ Mono.Interface[A4, B4, _])] =
-      new Wiring[(Mono.Interface[A1, B1, _]) ⊗ (Mono.Interface[A3, B3, _]) ~> (Mono.Interface[A2, B2, _] ⊗ Mono.Interface[A4, B4, _])]:
-        def `f₁`[Y]: Readout[(Mono.Interface[A1, B1, _]) ⊗ (Mono.Interface[A3, B3, _]) ~> (Mono.Interface[A2, B2, _] ⊗ Mono.Interface[A4, B4, _]), Y] =
+    def ⊗(w2: Wiring[Interface[A3, B3, _] ~> Interface[A4, B4, _]]): Wiring[(Interface[A1, B1, _]) ⊗ (Interface[A3, B3, _]) ~> (Interface[A2, B2, _] ⊗ Interface[A4, B4, _])] =
+      new Wiring[(Interface[A1, B1, _]) ⊗ (Interface[A3, B3, _]) ~> (Interface[A2, B2, _] ⊗ Interface[A4, B4, _])]:
+        def `f₁`[Y]: Readout[(Interface[A1, B1, _]) ⊗ (Interface[A3, B3, _]) ~> (Interface[A2, B2, _] ⊗ Interface[A4, B4, _]), Y] =
           (s1, s2) => (w1.`f₁`(s1), w2.`f₁`(s2))
-        def `f#`[Y]: Update[(Mono.Interface[A1, B1, _]) ⊗ (Mono.Interface[A3, B3, _]) ~> (Mono.Interface[A2, B2, _] ⊗ Mono.Interface[A4, B4, _]), Y] =
+        def `f#`[Y]: Update[(Interface[A1, B1, _]) ⊗ (Interface[A3, B3, _]) ~> (Interface[A2, B2, _] ⊗ Interface[A4, B4, _]), Y] =
           (s, a) => (w1.`f#`(s._1, a._1), w2.`f#`(s._2, a._2))
