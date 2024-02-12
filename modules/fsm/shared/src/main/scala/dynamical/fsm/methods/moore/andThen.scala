@@ -3,6 +3,7 @@ package dynamical.fsm.methods.moore
 import cats.Id
 import dynamical.fsm.{Moore, Wiring}
 import dynamical.fsm.methods.polymap.asMoore.asMoore
+import dynamical.fsm.methods.wiring.asPolyMap.asPolyMap
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
 import polynomial.`object`.Monomial.{Interface, Store}
@@ -10,11 +11,11 @@ import polynomial.product.⊗
 
 object andThen:
 
-  extension [S, A, B, Y] (m: Moore[Store[Id[S], _] ~> Interface[A, Id[B], _]])
+  extension [S, A, B, C, D, Y] (m: Moore[Store[Id[S], _] ~> Interface[A, Id[B], _]])
     @scala.annotation.targetName("andThenStoreMonoToMono")
     def andThen(
-      w: Wiring[Interface[A, Id[B], _] ~> Interface[A, A => Id[B], _]]
-    ): Moore[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Id[B], _]] =
+      w: Wiring[Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _]]
+    ): Moore[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _]] =
       m.asPolyMap
        .andThen(w.asPolyMap)
        .asMoore(m.init)

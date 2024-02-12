@@ -18,13 +18,13 @@ object asWiring:
         def `f#`[Y]: Update[Interface[A, B, _] ~> Interface[A, A => B, _], Y] =
           p.`φ#`
 
-  extension [F[_], A, B, Y] (p: PolyMap[Interface[A, B, _], Interface[A, A => F[B], _], Y])
+  extension [F[_], A, B, C, D, Y] (p: PolyMap[Interface[A, B, _], Interface[C, C => F[D], _], Y])
     @scala.annotation.targetName("asWiringMonoMonoF")
-    def asWiring: Wiring[Interface[A, B, _] ~> Interface[A, A => F[B], _]] =
-      new Wiring[Interface[A, B, _] ~> Interface[A, A => F[B], _]]:
-        def `f₁`[Y]: Readout[Interface[A, B, _] ~> Interface[A, A => F[B], _], Y] =
+    def asWiring: Wiring[Interface[A, B, _] ~> Interface[C, C => F[D], _]] =
+      new Wiring[Interface[A, B, _] ~> Interface[C, C => F[D], _]]:
+        def `f₁`[Y]: Readout[Interface[A, B, _] ~> Interface[C, C => F[D], _], Y] =
           p.φ
-        def `f#`[Y]: Update[Interface[A, B, _] ~> Interface[A, A => F[B], _], Y] =
+        def `f#`[Y]: Update[Interface[A, B, _] ~> Interface[C, C => F[D], _], Y] =
           p.`φ#`
 
   extension [A1, B1, A2, B2, Y] (p: PolyMap[BiInterface[A1, B1, A2, B2, _], BiInterface[A1, A1 => B1, A2, A2 => B2, _], Y])

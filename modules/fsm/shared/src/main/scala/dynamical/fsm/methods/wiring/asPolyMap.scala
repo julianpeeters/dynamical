@@ -9,9 +9,9 @@ import polynomial.product.⊗
 
 object asPolyMap:
 
-  extension [A, B, Y] (w: Wiring[Interface[A, Id[B], _] ~> Interface[A, A => Id[B], _]])
+  extension [A, B, C, D, Y] (w: Wiring[Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _]])
     @scala.annotation.targetName("asPolyMapWiringMonoMono")
-    def asPolyMap: PolyMap[Interface[A, Id[B], _], Interface[A, A => Id[B], _], Y] =
+    def asPolyMap: PolyMap[Interface[A, Id[B], _], Interface[C, C => Id[D], _], Y] =
       PolyMap(w.`f₁`, w.`f#`)
 
   extension [A, B, Y] (w: Wiring[Interface[A, Id[B], _] ~> Interface[A, A => Option[B], _]])

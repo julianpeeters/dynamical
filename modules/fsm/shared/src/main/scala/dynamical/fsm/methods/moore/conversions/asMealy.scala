@@ -23,17 +23,17 @@ object asMealy:
         def run[Y]: Run[(Store[S, _]) ~> (Interface[A, A => B, _]), Y] =
           (s, a) => (update(s, a), readout(s)(a))
 
-  extension [S, A, B, Y] (p: Moore[Store[S, _] ~> Interface[A, B, _] ~> Interface[A, A => B, _]])
+  extension [S, A, B, C, D, Y] (p: Moore[Store[S, _] ~> Interface[A, B, _] ~> Interface[C, C => D, _]])
     @scala.annotation.targetName("asMealyStoreToMonoToMono")
-    def asMealy: Mealy[Store[S, _] ~> Interface[A, B, _] ~> Interface[A, A => B, _]] =
-      new Mealy[Store[S, _] ~> Interface[A, B, _] ~> Interface[A, A => B, _]]:
-        def init[Y]: Init[Store[S, _] ~> Interface[A, B, _] ~> Interface[A, A => B, _], Y] =
+    def asMealy: Mealy[Store[S, _] ~> Interface[A, B, _] ~> Interface[C, C => D, _]] =
+      new Mealy[Store[S, _] ~> Interface[A, B, _] ~> Interface[C, C => D, _]]:
+        def init[Y]: Init[Store[S, _] ~> Interface[A, B, _] ~> Interface[C, C => D, _], Y] =
           p.init
-        def readout[Y]: Readout[Store[S, _] ~> Interface[A, B, _] ~> Interface[A, A => B, _], Y] =
+        def readout[Y]: Readout[Store[S, _] ~> Interface[A, B, _] ~> Interface[C, C => D, _], Y] =
           p.readout
-        def update[Y]: Update[(Store[S, _] ~> Interface[A, B, _] ~> Interface[A, A => B, _]), Y] =
+        def update[Y]: Update[(Store[S, _] ~> Interface[A, B, _] ~> Interface[C, C => D, _]), Y] =
           p.update
-        def run[Y]: Run[(Store[S, _]) ~> (Interface[A, B, _] ~> Interface[A, A => B, _]), Y] =
+        def run[Y]: Run[(Store[S, _]) ~> (Interface[A, B, _] ~> Interface[C, C => D, _]), Y] =
           (s, a) => (p.update(s, a), p.readout(s)(a))
 
   extension [S1, S2, A, B, C, Y] (p: Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Interface[(A, B), C, _] ⊗ Interface[C, B, _]) ~> Interface[A, A => C, _]])

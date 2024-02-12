@@ -17,12 +17,19 @@ object Wiring:
   export dynamical.fsm.methods.wiring.product.tensor.*
   export dynamical.fsm.methods.wiring.asPolyMap.*
 
+  @scala.annotation.targetName("appMono")
+  def apply[A, B, C, D, Y](
+    r: B => C => D,
+    u: (B, C) => A
+  ): Wiring[Interface[A, B, _] ~> Interface[C, C => Id[D], _]] =
+    PolyMap[Interface[A, B, _], Interface[C, C => Id[D], _], Y](r, u).asWiring
+
   @scala.annotation.targetName("appMonoF")
-  def apply[F[_], A, B, Y](
-    r: B => A => F[B],
-    u: (B, A) => A
-  ): Wiring[Interface[A, B, _] ~> Interface[A, A => F[B], _]] =
-    PolyMap[Interface[A, B, _], Interface[A, A => F[B], _], Y](r, u).asWiring
+  def apply[F[_], A, B, C, D, Y](
+    r: B => C => F[D],
+    u: (B, C) => A
+  ): Wiring[Interface[A, B, _] ~> Interface[C, C => F[D], _]] =
+    PolyMap[Interface[A, B, _], Interface[C, C => F[D], _], Y](r, u).asWiring
 
   @scala.annotation.targetName("appBi")
   def apply[A1, B1, A2, B2, Y](

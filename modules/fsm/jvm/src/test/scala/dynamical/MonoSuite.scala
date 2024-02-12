@@ -23,14 +23,14 @@ class MonoSuite extends FunSuite:
 
     test("wrap moore"):
       val l: Moore[Store[Boolean, _] ~> Interface[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
-      val m: Mealy[Store[Boolean, _] ~> Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] =
-        l.andThen(Wiring(i => j => j + j, (i1, i2) => i2)).asMealy
+      def m[Y]: Mealy[Store[Boolean, _] ~> Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] =
+        l.andThen(Wiring[Id, Int, Int, Int, Int, Y](i => j => j + j, (i1, i2) => i2)).asMealy
       val obtained: List[Int] = List(1, 2, 3).mapAccumulate(m.init)((s, i) => m.run(s, i))._2   
       val expected: List[Int] = List(2, 4, 6) 
       assertEquals(obtained, expected)
 
     test("wrapper"):
-      def w[Y]: Wiring[Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = Wiring[Id, Int, Int, Y](i => j => j + j, (i1, i2) => i2)
+      def w[Y]: Wiring[Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = Wiring[Id, Int, Int, Int, Int, Y](i => j => j + j, (i1, i2) => i2)
       val l: Moore[Store[Boolean, _] ~> Interface[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
       val m: Mealy[Store[Boolean, _] ~> Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = l.andThen(w).asMealy
       val obtained: List[Int] = List(1, 2, 3).mapAccumulate(m.init)((s, i) => m.run(s, i))._2   
@@ -45,7 +45,7 @@ class MonoSuite extends FunSuite:
       assertEquals(obtained, expected)
 
     test("wrapped semi-choice"):
-      def w[Y]: Wiring[Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = Wiring[Id, Int, Int, Y](i => j => j + j, (i1, i2) => i2)
+      def w[Y]: Wiring[Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = Wiring[Id, Int, Int, Int, Int, Y](i => j => j + j, (i1, i2) => i2)
       val n: Moore[Store[Option[Boolean], _] ~> Interface[Int, Int, _]] =
         Moore(Some(true), s => s.fold(0)(b => if b then 1 else 0), (s, i) => if i > 1 then None else s.map(b => !b))
       val m = n.andThen(w)

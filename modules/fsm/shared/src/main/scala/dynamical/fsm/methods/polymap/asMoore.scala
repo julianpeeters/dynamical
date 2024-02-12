@@ -32,15 +32,15 @@ object asMoore:
         def update[Y]: Update[Store[S, _] ~> BiInterface[A1, B1, A2, B2, _], Y] =
           p.`φ#`
 
-  extension [S, A, B, Y] (p: PolyMap[PolyMap[Store[Id[S], _], Interface[A, Id[B], _], _], Interface[A, A => Id[B], _], Y])
+  extension [S, A, B, C, D, Y] (p: PolyMap[PolyMap[Store[Id[S], _], Interface[A, Id[B], _], _], Interface[C, C => Id[D], _], Y])
     @scala.annotation.targetName("asMooreStoreToMonoToMono")
-    def asMoore(i: S): Moore[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Id[B], _]] =
-      new Moore[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Id[B], _]]:
-        def init[Y]: Init[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Id[B], _], Y] =
+    def asMoore(i: S): Moore[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _]] =
+      new Moore[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _]]:
+        def init[Y]: Init[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _], Y] =
           i
-        def readout[Y]: Readout[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Id[B], _], Y] =
+        def readout[Y]: Readout[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _], Y] =
           p.φ
-        def update[Y]: Update[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Id[B], _], Y] =
+        def update[Y]: Update[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _], Y] =
           p.`φ#`
 
   
