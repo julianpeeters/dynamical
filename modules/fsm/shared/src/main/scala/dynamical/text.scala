@@ -2,19 +2,21 @@ package dynamical
 
 import cats.implicits.given
 import dynamical.fsm.{Moore, Wiring}
+import dynamical.fsm.methods.moore.andThen.andThen
 import dynamical.seq.noneTerminate
 import polynomial.morphism.~>
-import polynomial.`object`.{Binomial, Monomial}
+import polynomial.`object`.Binomial.BiInterface
+import polynomial.`object`.Monomial.Store
 
 object text:
 
-  def lineReader: Moore[Monomial.Store[List[String], _] ~> Binomial.Interface[Some[String], None.type, None.type, Some[List[String]], _]] =
+  def lineReader: Moore[Store[List[String], _] ~> BiInterface[Some[String], None.type, None.type, Some[List[String]], _]] =
     Moore(List.empty[String], _ => None, s => Some(s), (s, i) => s ++ i.value.split("\n"), (s, i) => s)
 
   val wrappedLineReader: Moore[
-    Monomial.Store[List[String], _] ~>
-      Binomial.Interface[Some[String], None.type, None.type, Some[List[String]], _] ~>
-        Binomial.Interface[Some[String], Some[String] => None.type, None.type, None.type => Some[List[String]], _]
+    Store[List[String], _] ~>
+      BiInterface[Some[String], None.type, None.type, Some[List[String]], _] ~>
+        BiInterface[Some[String], Some[String] => None.type, None.type, None.type => Some[List[String]], _]
   ] = lineReader.andThen(
     Wiring(
       none => _ => none,
@@ -36,7 +38,7 @@ object text:
 
   object utf8:
 
-    def decoder: Moore[Monomial.Store[String, _] ~> Binomial.Interface[Some[Byte], None.type, None.type, Some[String], _]] =
+    def decoder: Moore[Store[String, _] ~> BiInterface[Some[Byte], None.type, None.type, Some[String], _]] =
       Moore(
         "",
         _ => None,
@@ -46,9 +48,9 @@ object text:
       )
 
     val wrappedDecoder: Moore[
-      Monomial.Store[String, _] ~>
-        Binomial.Interface[Some[Byte], None.type, None.type, Some[String], _] ~>
-          Binomial.Interface[Some[Byte], Some[Byte] => None.type, None.type, None.type => Some[String], _]
+      Store[String, _] ~>
+        BiInterface[Some[Byte], None.type, None.type, Some[String], _] ~>
+          BiInterface[Some[Byte], Some[Byte] => None.type, None.type, None.type => Some[String], _]
     ] =
       decoder.andThen(
         Wiring(

@@ -4,13 +4,13 @@ import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore}
 import munit.FunSuite
 import polynomial.morphism.~>
-import polynomial.`object`.Monomial
+import polynomial.`object`.Monomial.{Interface, Store}
 import polynomial.product.◁
 
 class CompositionSuite extends FunSuite:
 
   test("mealy composition product"):
-    type P[Y] = (Monomial.Store[Boolean, _] ~> (Monomial.Interface[Int, Int, _] ◁ Monomial.Interface[String, String => String, _]))[Y]
+    type P[Y] = (Store[Boolean, _] ~> (Interface[Int, Int, _] ◁ Interface[String, String => String, _]))[Y]
     val n: Moore[P] =
       Moore(
         i = false,

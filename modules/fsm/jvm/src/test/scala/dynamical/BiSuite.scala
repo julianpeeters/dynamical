@@ -4,14 +4,15 @@ import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore}
 import munit.FunSuite
 import polynomial.morphism.~>
-import polynomial.`object`.{Binomial, Monomial}
+import polynomial.`object`.Binomial.BiInterface
+import polynomial.`object`.Monomial.Store
 
 class BiSuite extends FunSuite:
 
     test("moore"):
       val m: Moore[
-        Monomial.Store[Boolean, _] ~>
-          Binomial.Interface[
+        Store[Boolean, _] ~>
+          BiInterface[
             Some[Int], Some[Int] => Some[Int],
             None.type, None.type => None.type,
             _
@@ -28,8 +29,8 @@ class BiSuite extends FunSuite:
 
     test("mealy"):
       def m[Y]: Mealy[
-        Monomial.Store[Boolean, _] ~>
-          Binomial.Interface[
+        Store[Boolean, _] ~>
+          BiInterface[
             Some[Int], Some[Int] => None.type,
             None.type, None.type => Some[Int],
             _

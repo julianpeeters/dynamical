@@ -1,8 +1,7 @@
 val CatsV = "2.10.0"
-val DestructuredV = "0.2.0"
 val Fs2V = "3.9.3"
 val MUnitV = "0.7.29"
-val PolynomialV = "0.4.0"
+val PolynomialV = "0.5.0"
 
 inThisBuild(List(
   crossScalaVersions := Seq(scalaVersion.value),
@@ -26,7 +25,7 @@ inThisBuild(List(
     "-Wvalue-discard",
     "-Ykind-projector:underscores"
   ),
-  scalaVersion := "3.3.1",
+  scalaVersion := "3.4.0",
   versionScheme := Some("semver-spec"),
 ))
 
@@ -56,7 +55,6 @@ lazy val fsm = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "dynamical-fsm",
     libraryDependencies ++= Seq(
-      "com.julianpeeters" %%% "destructured" % DestructuredV,
       "com.julianpeeters" %%% "polynomial"   % PolynomialV,
       "org.typelevel"     %%% "cats-core"    % CatsV,
       "org.scalameta"      %% "munit"        % MUnitV         % Test
@@ -71,7 +69,6 @@ lazy val docs = project.in(file("docs/gitignored"))
     mdocVariables := Map(
       "SCALA"        -> crossScalaVersions.value.map(e => e.takeWhile(_ != '.')).mkString(", "),
       "VERSION"      -> version.value.takeWhile(_ != '+'),
-      "DESTRUCTURED" -> DestructuredV.reverse.dropWhile(_ != '.').drop(1).reverse,
       "FS2"          -> Fs2V.reverse.dropWhile(_ != '.').drop(1).reverse,
       "POLYNOMIAL"   -> PolynomialV.reverse.dropWhile(_ != '.').drop(1).reverse,
     )
