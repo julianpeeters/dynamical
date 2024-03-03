@@ -1,12 +1,13 @@
 package dynamical.fsm.methods.moore.conversions
 
+import cats.Id
+import dynamical.fsm.methods.mealy.run.Runner2
 import dynamical.fsm.methods.types.{Init, Readout, Run, Update}
 import dynamical.fsm.{Mealy, Moore}
 import polynomial.morphism.~>
 import polynomial.`object`.Binomial.BiInterface
 import polynomial.`object`.Monomial.{Interface, Store}
-import polynomial.product.{⊗, ◁}
-import dynamical.fsm.methods.mealy.run.Runner2
+import polynomial.product.{×, ⊗, ◁}
 
 object asMealy:
     
@@ -35,6 +36,19 @@ object asMealy:
           p.update
         def run[Y]: Run[(Store[S, _]) ~> (Interface[A, B, _] ~> Interface[C, C => D, _]), Y] =
           (s, a) => (p.update(s, a), p.readout(s)(a))
+
+  extension [S, A1, B1, A2, B2, Y] (p: Moore[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]])
+    @scala.annotation.targetName("asMealyStoreToCartesianMono")
+    def asMealy: Mealy[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]] =
+      new Mealy[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]]:
+        def init[Y]: Init[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
+          p.init
+        def readout[Y]: Readout[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
+          p.readout
+        def update[Y]: Update[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
+          p.update
+        def run[Y]: Run[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
+          (s, a) => (update(s, a), readout(s)(a))
 
   extension [S1, S2, A, B, C, Y] (p: Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Interface[(A, B), C, _] ⊗ Interface[C, B, _]) ~> Interface[A, A => C, _]])
     @scala.annotation.targetName("asMealyStoreStoreTensorToMonoMonoTensorToMono2")

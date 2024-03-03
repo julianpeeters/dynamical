@@ -3,7 +3,7 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
 
 <figure>
   <img src="IMAGE.jpg" alt="A mermaid.js chart depicting a wiring diagram." width=50% height=50%>
-  <figcaption style="text-align: justify;">A wiring diagram: &nbsp; <span style="font-family:Courier">Plant</span> ⊗ <span style="font-family:Courier">Controller</span> → <span style="font-family:Courier">System</span></figcaption>
+  <figcaption style="text-align: justify;">A wiring diagram: &nbsp; `<span style="font-family:Courier">Plant</span> ⊗ <span style="font-family:Courier">Controller</span> → <span style="font-family:Courier">System</span>`</figcaption>
 </figure>
 
 ### Modules

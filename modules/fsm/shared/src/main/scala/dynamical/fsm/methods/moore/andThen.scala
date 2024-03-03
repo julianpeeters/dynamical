@@ -7,7 +7,7 @@ import dynamical.fsm.methods.wiring.asPolyMap.asPolyMap
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
 import polynomial.`object`.Monomial.{Interface, Store}
-import polynomial.product.⊗
+import polynomial.product.{×, ⊗}
 
 object andThen:
 
@@ -94,3 +94,12 @@ object andThen:
       m.asPolyMap
        .andThen(w.asPolyMap)
        .asMoore(m.init)
+             
+  extension [S, A1, B1, A2, B2, Y] (m: Moore[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _])])
+    @scala.annotation.targetName("andThenStoreCartesianMonoMono")
+    def andThen(
+      w: Wiring[(Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]]
+    ): Moore[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]] =
+       m.asPolyMap
+        .andThen(w.asPolyMap)
+        .asMoore(m.init)

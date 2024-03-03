@@ -5,7 +5,7 @@ import dynamical.fsm.methods.types.{Init, Readout, Update}
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
 import polynomial.`object`.Monomial.{Interface, Store}
-import polynomial.product.{◁, ⊗}
+import polynomial.product.{×, ◁, ⊗}
 
 trait Moore[P[_]]:
   def init[Y]: Init[P, Y]
@@ -26,6 +26,15 @@ object Moore:
     u: (S, A) => S
   ): Moore[Store[S, _] ~> Interface[A, B, _]] =
     PolyMap[Store[S, _], Interface[A, B, _], Y](r, u)
+      .asMoore(i)
+
+  @scala.annotation.targetName("applyCartesian")
+  def apply[S, A1, B1, A2, B2, Y](
+    i: S,
+    r: S => (B1, B2),
+    u: (S, Either[A1, A2]) => S
+  ): Moore[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _])] =
+    PolyMap[Store[S, _], (Interface[A1, B1,_] ×  Interface[A2, B2, _]), Y](r, u)
       .asMoore(i)
 
   @scala.annotation.targetName("applyComposite")

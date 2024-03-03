@@ -6,7 +6,7 @@ import dynamical.fsm.Moore
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
 import polynomial.`object`.Monomial.{Interface, Store}
-import polynomial.product.{◁, ⊗}
+import polynomial.product.{×, ◁, ⊗}
 
 object asMoore:
 
@@ -163,6 +163,28 @@ object asMoore:
         def readout[Y]: Readout[(Store[S1, _] ⊗ Store[S2, _]) ~> (BiInterface[A1, B1, A2, B2, _] ⊗ BiInterface[A3, B3, A4, B4, _]) ~> BiInterface[A1, A1 => B3, A2, A2 => B4, _], Y] =
           p.φ
         def update[Y]: Update[(Store[S1, _] ⊗ Store[S2, _]) ~> (BiInterface[A1, B1, A2, B2, _] ⊗ BiInterface[A3, B3, A4, B4, _]) ~> BiInterface[A1, A1 => B3, A2, A2 => B4, _], Y] =
+          p.`φ#`
+
+  extension [S, A1, B1, A2, B2, Y] (p: PolyMap[Store[S, _], (Interface[A1, B1, _] × Interface[A2, B2, _]), Y])
+    @scala.annotation.targetName("asMooreMonoStoreCartesianMonoInterface")
+    def asMoore(i: S): Moore[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _])] =
+      new Moore[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _])]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]), Y] =
+          p.φ
+        def update[Y]: Update[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]), Y] =
+          p.`φ#`
+
+  extension [S, A1, B1, A2, B2, Y] (p: PolyMap[PolyMap[Store[S, _], (Interface[A1, B1, _] × Interface[A2, B2, _]), _], Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y])
+    @scala.annotation.targetName("asMooreMonoStoreCartesianMonoInterfaceMonoInterface")
+    def asMoore(i: S): Moore[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]] =
+      new Moore[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
+          p.φ
+        def update[Y]: Update[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
           p.`φ#`
 
   extension [S, A1, B1, A2, B2, Y] (p: PolyMap[Store[S, _], (Interface[A1, B1, _] ◁ Interface[A2, B2, _]), Y])

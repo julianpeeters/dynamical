@@ -5,7 +5,7 @@ import dynamical.fsm.Wiring
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
 import polynomial.`object`.Monomial.Interface
-import polynomial.product.⊗
+import polynomial.product.{×, ⊗}
 
 object asPolyMap:
 
@@ -62,4 +62,9 @@ object asPolyMap:
   extension [A1, B1, A2, B2, A3, B3, A4, B4, Y] (w: Wiring[(BiInterface[A1, B1, A2, B2, _] ⊗ BiInterface[A3, B3, A4, B4, _]) ~> (BiInterface[A1, A1 => B3, A2, A2 => B4, _])])
     @scala.annotation.targetName("asPolyMapTensoredBi")
     def asPolyMap: PolyMap[(BiInterface[A1, B1, A2, B2, _] ⊗ BiInterface[A3, B3, A4, B4, _]), (BiInterface[A1, A1 => B3, A2, A2 => B4, _]), Y] =
+      PolyMap(w.`f₁`, w.`f#`)
+
+  extension [A1, B1, A2, B2, Y] (w: Wiring[(Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]])
+    @scala.annotation.targetName("asPolyMapMonoMonoCartesianToMono1")
+    def asPolyMap: PolyMap[(Interface[A1, B1, _] × Interface[A2, B2, _]), Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
       PolyMap(w.`f₁`, w.`f#`)

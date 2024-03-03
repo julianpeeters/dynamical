@@ -6,7 +6,7 @@ import dynamical.fsm.methods.types.{Readout, Update}
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
 import polynomial.`object`.Monomial.Interface
-import polynomial.product.⊗
+import polynomial.product.{×, ⊗}
 
 trait Wiring[P[_]]:
   def `f₁`[Y]: Readout[P, Y]
@@ -39,6 +39,13 @@ object Wiring:
     u2: (B2, A2) => A2
   ): Wiring[BiInterface[A1, B1, A2, B2, _] ~> BiInterface[A1, A1 => B1, A2, A2 => B2, _]] =
     PolyMap[BiInterface[A1, B1, A2, B2, _], BiInterface[A1, A1 => B1, A2, A2 => B2, _], Y]((r1, r2), (u1, u2)).asWiring
+
+  @scala.annotation.targetName("appCartesian1")
+  def apply[A1, B1, A2, B2, Y](
+    r: ((B1, B2)) => Either[A1, A2] => (B1, B2),
+    u: ((B1, B2), Either[A1, A2]) => Either[A1, A2]
+  ): Wiring[(Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]] =
+    PolyMap[(Interface[A1, B1, _] × Interface[A2, B2, _]), Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y](r, u).asWiring
 
   @scala.annotation.targetName("appTensored1")
   def apply[A1, B1, A2, B2, Y](

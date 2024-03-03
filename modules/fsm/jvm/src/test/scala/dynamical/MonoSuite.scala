@@ -30,7 +30,7 @@ class MonoSuite extends FunSuite:
       assertEquals(obtained, expected)
 
     test("wrapper"):
-      def w[Y]: Wiring[Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = Wiring[Id, Int, Int, Int, Int, Y](i => j => j + j, (i1, i2) => i2)
+      def w[Y]: Wiring[Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = Wiring(i => j => j + j, (i1, i2) => i2)
       val l: Moore[Store[Boolean, _] ~> Interface[Int, Int, _]] = Moore(false, s => if s then 1 else 0, (s, i) => s)
       val m: Mealy[Store[Boolean, _] ~> Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = l.andThen(w).asMealy
       val obtained: List[Int] = List(1, 2, 3).mapAccumulate(m.init)((s, i) => m.run(s, i))._2   
