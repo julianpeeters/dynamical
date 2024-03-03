@@ -18,7 +18,7 @@ The most basic finite state machines are those parameterized by a polymap from
 a store to a monomial:
 
 ```scala mdoc
-import polynomial.`object`.Mono
+import polynomial.`object`.Monomial.{Interface, Store}
 import polynomial.morphism.~>
 import dynamical.fsm.Moore
 
@@ -32,7 +32,7 @@ output `B` to be a function from input to output, `A => B`. For example:
 import cats.implicits.given
 import dynamical.fsm.Moore
 import polynomial.morphism.~>
-import polynomial.`object`.Mono
+import polynomial.`object`.Monomial.{Interface, Store}
 
 def mealified[Y]: Moore[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] =
   Moore[Boolean, Int, Int => Int, Y](
@@ -56,7 +56,7 @@ example:
 import cats.implicits.given // for `mapAccumulate`
 import dynamical.fsm.{Moore, Mealy}
 import polynomial.morphism.~>
-import polynomial.`object`.Mono
+import polynomial.`object`.Monomial.{Interface, Store}
 
 def moore[Y]: Moore[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] =
   Moore[Boolean, Int, Int => Int, Y](
@@ -90,8 +90,7 @@ There are several aspects to the composition of state systems with wiring diagra
 ```scala mdoc:reset:height=5
 import cats.implicits.given
 import dynamical.fsm.{Mealy, Moore, Wiring}
-import polynomial.`object`.Mono
-import polynomial.`object`.Store
+import polynomial.`object`.Monomial.{Interface, Store}
 import polynomial.morphism.~>
 import polynomial.product.⊗
 
@@ -135,7 +134,7 @@ import dynamical.fsm.Mealy
 import dynamical.stream.transducer
 import fs2.Stream
 import polynomial.morphism.~>
-import polynomial.`object`.Mono
+import polynomial.`object`.Monomial.{Interface, Store}
 
 val m: Mealy[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
 
