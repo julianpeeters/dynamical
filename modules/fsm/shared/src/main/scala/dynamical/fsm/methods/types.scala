@@ -22,9 +22,9 @@ object types:
 
   type Readout[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y] => PolyMap.Phi[p, q, Y]
-
+//  Run[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y]
   type Run[P[_], Y] = P[Y] match
-    case PolyMap[p, q, Y] => (p[Y], q[Y]) match
+    case PolyMap[p, q, Y] => (PolyMap.Eval[p, Y], PolyMap.Eval[q, Y]) match
       case (Store[s, Y], BiInterface[a1, b1, a2, b2, Y])      => (s, Unify2[a1, a2]) => (s, Unify2[Codomain1[b1], Codomain1[b2]])
       case (Store[s, Y], Interface[a, b, Y])                  => (s, a) => (s, Codomain1[b])
       case (Store[s, Y], Composition[p, q, Y])                => (s, Composition.DecomposeSharp[p, q, Y]) => (s, Codomain2[Composition.Decompose[p, q, Y]])
@@ -32,9 +32,9 @@ object types:
       case (PolyMap[p, q, Y], BiInterface[a1, b3, a2, b4, Y]) => Run[PolyMap[p, BiInterface[a1, b3, a2, b4, _], _], Y]
       case (PolyMap[p, q, Y], Interface[a, b, Y])             => Run[PolyMap[p, Interface[a, b, _], _], Y]
       case (PolyMap[o, p, Y], Tensor[q, r, Y])                => Run[PolyMap[o, Tensor.DayConvolution[q, r, _], _], Y]
-      case (Tensor[p, q, Y], BiInterface[a1, b3, a2, b4, Y])  => ((Init[p, Y], Init[q, Y]), Unify2[a1, a2]) => ((Init[p, Y], Init[q, Y]), Unify2[Codomain1[b3], Codomain1[b4]])
-      case (Tensor[p, q, Y], Interface[a, b, Y])              => ((Init[p, Y], Init[q, Y]), a) => ((Init[p, Y], Init[q, Y]), Codomain1[b])
-      case (Tensor[o, p, Y], Tensor[q, r, Y])                 => Run[PolyMap[Tensor.DayConvolution[o, p, _], Tensor.DayConvolution[q, r, _], _], Y]
+      // case (Tensor[p, q, Y], BiInterface[a1, b3, a2, b4, Y])  => ((Init[p, Y], Init[q, Y]), Unify2[a1, a2]) => ((Init[p, Y], Init[q, Y]), Unify2[Codomain1[b3], Codomain1[b4]])
+      // case (Tensor[p, q, Y], Interface[a, b, Y])              => ((Init[p, Y], Init[q, Y]), a) => ((Init[p, Y], Init[q, Y]), Codomain1[b])
+      // case (Tensor[o, p, Y], Tensor[q, r, Y])                 => Run[PolyMap[Tensor.DayConvolution[o, p, _], Tensor.DayConvolution[q, r, _], _], Y]
 
   type Update[P[_], Y] = P[Y] match
     case PolyMap[p, q, Y] => PolyMap.PhiSharp[p, q, Y]

@@ -1,7 +1,7 @@
 val CatsV = "2.10.0"
 val Fs2V = "3.9.3"
 val MUnitV = "0.7.29"
-val PolynomialV = "0.5.0+1-9b3b80d1-SNAPSHOT"
+val PolynomialV = "0.5.0+3-6fb0ba15+20240303-1456-SNAPSHOT"
 
 inThisBuild(List(
   crossScalaVersions := Seq(scalaVersion.value),

@@ -47,6 +47,27 @@ object Wiring:
   ): Wiring[(Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]] =
     PolyMap[(Interface[A1, B1, _] × Interface[A2, B2, _]), Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y](r, u).asWiring
 
+  @scala.annotation.targetName("appCartesianTensored1")
+  def apply[A1, B1, A2, B2, A3, B3, Y](
+    r: (((B1, B2), B3)) => ((Either[A1, A2], A3)) => ((B1, B2), B3),
+    u: (((B1, B2), B3), (Either[A1, A2], A3)) => (Either[A1, A2], A3)
+  ): Wiring[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]] =
+    PolyMap[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y](r, u).asWiring
+
+  @scala.annotation.targetName("appTensoredCartesian1")
+  def apply[A1, B1, A2, B2, A3, B3, Y](
+    r: ((B1, (B2, B3))) => Either[A1, (A2, A3)] => (B1, (B2, B3)),
+    u: ((B1, (B2, B3)), Either[A1, (A2, A3)]) => Either[A1, (A2, A3)]
+  ): Wiring[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _]] =
+    PolyMap[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _], Y](r, u).asWiring
+
+  @scala.annotation.targetName("appCartesianTensoredTensoredCartesian1")
+  def apply[A1, B1, A2, B2, A3, B3, Y](
+    r: (((B1, B2), B3)) => (B1, (B2, B3)),
+    u: (((B1, B2), B3), Either[A1, (A2, A3)]) => (Either[A1, A2], A3)
+  ): Wiring[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))] =
+    PolyMap[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y](r, u).asWiring
+
   @scala.annotation.targetName("appTensored1")
   def apply[A1, B1, A2, B2, Y](
     r: ((B1, B2)) => A1 => B2,

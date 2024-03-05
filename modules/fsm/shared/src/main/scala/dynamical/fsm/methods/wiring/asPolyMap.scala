@@ -68,3 +68,18 @@ object asPolyMap:
     @scala.annotation.targetName("asPolyMapMonoMonoCartesianToMono1")
     def asPolyMap: PolyMap[(Interface[A1, B1, _] × Interface[A2, B2, _]), Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
       PolyMap(w.`f₁`, w.`f#`)
+
+  extension [A1, B1, A2, B2, A3, B3, Y] (w: Wiring[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]])
+    @scala.annotation.targetName("asPolyMapMonoMonoCartesianToMonoTensoredMono")
+    def asPolyMap: PolyMap[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+      PolyMap(w.`f₁`, w.`f#`)
+
+  extension [A1, B1, A2, B2, A3, B3, Y] (w: Wiring[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _]])
+    @scala.annotation.targetName("asPolyMapToCartesianMonoTensoredMono")
+    def asPolyMap: PolyMap[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _], Y] =
+      PolyMap(w.`f₁`, w.`f#`)
+
+  extension [A1, B1, A2, B2, A3, B3, Y] (w: Wiring[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))])
+    @scala.annotation.targetName("asPolyMapMonoMonoCartesianToMonoTensoredMonoTensoredCartesian")
+    def asPolyMap: PolyMap[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
+      PolyMap(w.`f₁`, w.`f#`)

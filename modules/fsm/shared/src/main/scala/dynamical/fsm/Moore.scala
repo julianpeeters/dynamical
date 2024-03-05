@@ -14,12 +14,6 @@ trait Moore[P[_]]:
 
 object Moore:
 
-  export dynamical.fsm.methods.moore.andThen.*
-  export dynamical.fsm.methods.moore.conversions.asMealy.*
-  export dynamical.fsm.methods.moore.conversions.asPolyMap.*
-  export dynamical.fsm.methods.moore.product.tensor.*
-  export dynamical.fsm.methods.moore.swap.*
-
   def apply[S, A, B, Y](
     i: S,
     r: S => B,
@@ -35,6 +29,24 @@ object Moore:
     u: (S, Either[A1, A2]) => S
   ): Moore[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _])] =
     PolyMap[Store[S, _], (Interface[A1, B1,_] ×  Interface[A2, B2, _]), Y](r, u)
+      .asMoore(i)
+
+  @scala.annotation.targetName("applyCartesianTensor")
+  def apply[S, A1, B1, A2, B2, A3, B3, Y](
+    i: S,
+    r: S => ((B1, B2), B3),
+    u: (S, (Either[A1, A2], A3)) => S
+  ): Moore[Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])] =
+    PolyMap[Store[S, _], ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), Y](r, u)
+      .asMoore(i)
+
+  @scala.annotation.targetName("applyTensorCartesian")
+  def apply[S, A1, B1, A2, B2, A3, B3, Y](
+    i: S,
+    r: S => (B1, (B2, B3)),
+    u: (S, Either[A1, (A2, A3)]) => S
+  ): Moore[Store[S, _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))] =
+    PolyMap[Store[S, _], (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y](r, u)
       .asMoore(i)
 
   @scala.annotation.targetName("applyComposite")
@@ -55,3 +67,9 @@ object Moore:
   ): Moore[Store[S, _] ~> BiInterface[A1, B1, A2, B2, _]] =
     PolyMap[Store[S, _],  BiInterface[A1, B1, A2, B2, _], Y]((r1, r2), (u1, u2))
       .asMoore(i)
+
+  export dynamical.fsm.methods.moore.andThen.*
+  export dynamical.fsm.methods.moore.conversions.asMealy.*
+  export dynamical.fsm.methods.moore.conversions.asPolyMap.*
+  export dynamical.fsm.methods.moore.product.tensor.*
+  export dynamical.fsm.methods.moore.swap.*

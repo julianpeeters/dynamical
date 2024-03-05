@@ -1,5 +1,6 @@
 package dynamical.fsm.methods.moore.conversions
 
+import cats.Id
 import dynamical.fsm.Moore
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
@@ -41,4 +42,21 @@ object asPolyMap:
   extension [S, A1, B1, A2, B2, Y] (m: Moore[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _])])
     @scala.annotation.targetName("asPolyMapStoreToMonoMonoCartesian")
     def asPolyMap: PolyMap[Store[S, _], (Interface[A1, B1, _] × Interface[A2, B2, _]), Y] =
+      PolyMap(m.readout, m.update)
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (m: Moore[Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])])
+    @scala.annotation.targetName("asPolyMapStoreToMonoMonoCartesianTensoredMono")
+    def asPolyMap: PolyMap[Store[S, _], ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), Y] =
+      PolyMap(m.readout, m.update)
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (m: Moore[Store[S, _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))])
+    @scala.annotation.targetName("asPolyMapStoreToMonoMonoTensoredCartesianMono")
+    def asPolyMap: PolyMap[Store[S, _], (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
+      PolyMap(m.readout, m.update)
+
+// Moore[Store[cats.Id[S], _] ~>  ((Interface[A1, B1, _²]) × (Interface[A2, B2, _³]) ⊗ (Interface[A3, B3, _⁴])) ~> ( (Interface[A1, B1, _⁵]) × ( (Interface[A2, B2, _⁶]) ⊗ (Interface[A3, B3, _⁷])))]
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (m: Moore[(Store[Id[S], _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))])
+    @scala.annotation.targetName("asPolyMapStoreToMonoMonoTensoredCartesianMonoCartesianTensoredMono")
+    def asPolyMap: PolyMap[PolyMap[Store[Id[S], _], ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), _], (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
       PolyMap(m.readout, m.update)

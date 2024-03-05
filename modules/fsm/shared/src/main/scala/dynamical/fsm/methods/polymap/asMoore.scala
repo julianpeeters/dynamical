@@ -176,6 +176,72 @@ object asMoore:
         def update[Y]: Update[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]), Y] =
           p.`φ#`
 
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[Store[S, _], ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), Y])
+    @scala.annotation.targetName("asMooreMonoStoreCartesianTensorMonoInterface")
+    def asMoore(i: S): Moore[Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])] =
+      new Moore[Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), Y] =
+          p.φ
+        def update[Y]: Update[Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), Y] =
+          p.`φ#`
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[PolyMap[Store[S, _], ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), _], Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y])
+    @scala.annotation.targetName("asMooreMonoStoreCartesianTensorMonoInterfaceMealified")
+    def asMoore(i: S): Moore[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]] =
+      new Moore[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+          p.φ
+        def update[Y]: Update[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+          p.`φ#`
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[Store[Id[S], _], (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y])
+    @scala.annotation.targetName("asMooreMonoStoreTensorCartesianMonoInterface")
+    def asMoore(i: S): Moore[Store[Id[S], _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))] =
+      new Moore[Store[Id[S], _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[Store[Id[S], _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
+          p.φ
+        def update[Y]: Update[Store[Id[S], _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
+          p.`φ#`
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[PolyMap[Store[Id[S], _], (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), _], Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _], Y])
+    @scala.annotation.targetName("asMooreMonoStoreTensorCartesianMonoInterfaceMealified")
+    def asMoore(i: S): Moore[(Store[Id[S], _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _]] =
+      new Moore[(Store[Id[S], _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _]]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[(Store[Id[S], _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _], Y] =
+          p.φ
+        def update[Y]: Update[(Store[Id[S], _] ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _], Y] =
+          p.`φ#`
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[PolyMap[Store[Id[S], _], ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), _], (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y])
+    @scala.annotation.targetName("asMooreMonoStoreCartesianTensorMonoInterfaceTensorCartesianMono")
+    def asMoore(i: S): Moore[(Store[Id[S], _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))] =
+      new Moore[(Store[Id[S], _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[(Store[Id[S], _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
+          p.φ
+        def update[Y]: Update[(Store[Id[S], _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
+          p.`φ#`
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[PolyMap[PolyMap[Store[S, _], ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), _], (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), _], Interface[Either[A1, (A2, A3)], (Either[A1, (A2, A3)]) => (B1, (B2, B3)), _], Y])
+    @scala.annotation.targetName("asMooreMonoStoreCartesianTensorMonoInterfaceTensorCartesianMonoDistributive")
+    def asMoore(i: S): Moore[((Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))) ~> Interface[Either[A1, (A2, A3)], (Either[A1, (A2, A3)]) => (B1, (B2, B3)), _]] =
+      new Moore[((Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))) ~> Interface[Either[A1, (A2, A3)], (Either[A1, (A2, A3)]) => (B1, (B2, B3)), _]]:
+        def init[Y]: S =
+          i
+        def readout[Y]: Readout[((Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))) ~> Interface[Either[A1, (A2, A3)], (Either[A1, (A2, A3)]) => (B1, (B2, B3)), _], Y] =
+          p.φ
+        def update[Y]: Update[((Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))) ~> Interface[Either[A1, (A2, A3)], (Either[A1, (A2, A3)]) => (B1, (B2, B3)), _], Y] =
+          p.`φ#`
+
   extension [S, A1, B1, A2, B2, Y] (p: PolyMap[PolyMap[Store[S, _], (Interface[A1, B1, _] × Interface[A2, B2, _]), _], Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y])
     @scala.annotation.targetName("asMooreMonoStoreCartesianMonoInterfaceMonoInterface")
     def asMoore(i: S): Moore[Store[S, _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]] =

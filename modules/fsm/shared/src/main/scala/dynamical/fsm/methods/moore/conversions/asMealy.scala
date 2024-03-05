@@ -50,6 +50,45 @@ object asMealy:
         def run[Y]: Run[Store[Id[S], _] ~> (Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
           (s, a) => (update(s, a), readout(s)(a))
 
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: Moore[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[((Either[A1, A2], A3)), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]])
+    @scala.annotation.targetName("asMealyStoreToCartesianMonoTensored")
+    def asMealy: Mealy[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[((Either[A1, A2], A3)), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]] =
+      new Mealy[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[((Either[A1, A2], A3)), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]]:
+        def init[Y]: Init[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[((Either[A1, A2], A3)), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+          p.init
+        def readout[Y]: Readout[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[((Either[A1, A2], A3)), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+          p.readout
+        def update[Y]: Update[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[((Either[A1, A2], A3)), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+          p.update
+        def run[Y]: Run[(Store[S, _] ~> ((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _])) ~> Interface[((Either[A1, A2], A3)), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+          (s, a) => (update(s, a), readout(s)(a._1, a._2))
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: Moore[(Store[S, _] ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _]])
+    @scala.annotation.targetName("asMealyStoreToTensoredMonoCartesian")
+    def asMealy: Mealy[(Store[S, _] ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _]] =
+      new Mealy[(Store[S, _] ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _]]:
+        def init[Y]: Init[(Store[S, _] ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _], Y] =
+          p.init
+        def readout[Y]: Readout[(Store[S, _] ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _], Y] =
+          p.readout
+        def update[Y]: Update[(Store[S, _] ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _], Y] =
+          p.update
+        def run[Y]: Run[(Store[S, _] ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _], Y] =
+          (s, a) => (update(s, a), readout(s)(a))
+
+  extension [S, A1, B1, A2, B2, A3, B3, Y] (p: Moore[((Store[String, _] ~> ((Interface[Int, Int, _] × Interface[String, String, _]) ⊗ Interface[Boolean, Boolean, _])) ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _] ])
+    @scala.annotation.targetName("asMealyStoreToTensoredMonoCartesianToCartesianMonoTensored")
+    def asMealy: Mealy[((Store[String, _] ~> ((Interface[Int, Int, _] × Interface[String, String, _]) ⊗ Interface[Boolean, Boolean, _])) ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _]] =
+      new Mealy[((Store[String, _] ~> ((Interface[Int, Int, _] × Interface[String, String, _]) ⊗ Interface[Boolean, Boolean, _])) ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _]]:
+        def init[Y]: Init[((Store[String, _] ~> ((Interface[Int, Int, _] × Interface[String, String, _]) ⊗ Interface[Boolean, Boolean, _])) ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _], Y] =
+          p.init
+        def readout[Y]: Readout[((Store[String, _] ~> ((Interface[Int, Int, _] × Interface[String, String, _]) ⊗ Interface[Boolean, Boolean, _])) ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _], Y] =
+          p.readout
+        def update[Y]: Update[((Store[String, _] ~> ((Interface[Int, Int, _] × Interface[String, String, _]) ⊗ Interface[Boolean, Boolean, _])) ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _], Y] =
+          p.update
+        def run[Y]: Run[((Store[String, _] ~> ((Interface[Int, Int, _] × Interface[String, String, _]) ⊗ Interface[Boolean, Boolean, _])) ~> (Interface[Int, Int, _] × (Interface[String, String, _] ⊗ Interface[Boolean, Boolean, _]))) ~> Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), _], Y] =
+          (s, a) => (update(s, a), readout(s)(a))
+
   extension [S1, S2, A, B, C, Y] (p: Moore[(Store[S1, _] ⊗ Store[S2, _]) ~> (Interface[(A, B), C, _] ⊗ Interface[C, B, _]) ~> Interface[A, A => C, _]])
     @scala.annotation.targetName("asMealyStoreStoreTensorToMonoMonoTensorToMono2")
     def asMealy: Mealy[(Store[S1, _] ⊗ Store[S2, _]) ~> (Interface[(A, B), C, _] ⊗ Interface[C, B, _]) ~> Interface[A, A => C, _]] =
