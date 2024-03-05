@@ -81,7 +81,6 @@ class CartesianSuite extends FunSuite:
     val expected: List[(Int, (String, Boolean))] = List((0, ("", false)), (3, ("foo", false)), (4, ("foo!", true)))
     assertEquals(obtained, expected)
 
-
   test("mealy linearly distributive"):
     type P[Y] = Interface[Int, Int, Y]
     type Q[Y] = Interface[String, String, Y]
@@ -101,7 +100,7 @@ class CartesianSuite extends FunSuite:
         b => (b._1._1, (b._1._2, b._2)), // re-tuple
         (b, a) => a match                // exhibit strength
           case Left(value) => (Left(value), b._2)
-          case Right(value) => (Right(value._1), value._2)
+          case Right(value) => (Right(b._1._2), value._2)
       )
     val z: Wiring[(P × (Q ⊗ R)) ~> T] = Wiring(b => a => b, (b, a) => a)
     val m: Mealy[((S ~> ((P × Q) ⊗ R)) ~> (P × (Q ⊗ R))) ~> T] = n.andThen(w).andThen(z).asMealy
