@@ -45,7 +45,7 @@ class MonoSuite extends FunSuite:
       assertEquals(obtained, expected)
 
     test("wrapped semi-choice"):
-      def w[Y]: Wiring[Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = Wiring[Id, Int, Int, Int, Int, Y](i => j => j + j, (i1, i2) => i2)
+      val w: Wiring[Interface[Int, Int, _] ~> Interface[Int, Int => Int, _]] = Wiring(i => j => j + j, (i1, i2) => i2)
       val n: Moore[Store[Option[Boolean], _] ~> Interface[Int, Int, _]] =
         Moore(Some(true), s => s.fold(0)(b => if b then 1 else 0), (s, i) => if i > 1 then None else s.map(b => !b))
       val m = n.andThen(w)

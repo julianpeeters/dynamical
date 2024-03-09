@@ -3,7 +3,7 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
 
 <figure>
   <img src="IMAGE.jpg" alt="A mermaid.js chart depicting a wiring diagram." width=50% height=50%>
-  <figcaption style="text-align: justify;">A wiring diagram: &nbsp; <span style="font-family:Courier">Plant</span> ⊗ <span style="font-family:Courier">Controller</span> → <span style="font-family:Courier">System</span></figcaption>
+  <figcaption style="text-align: justify;">A wiring diagram: &nbsp; `<span style="font-family:Courier">Plant</span> ⊗ <span style="font-family:Courier">Controller</span> → <span style="font-family:Courier">System</span>`</figcaption>
 </figure>
 
 ### Modules
@@ -40,7 +40,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.Monomial.{Interface, Store}
 
 def mealified[Y]: Moore[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] =
-  Moore[Boolean, Int, Int => Int, Y](
+  Moore(
     false,
     s => x => if s then x + x else x,   // if we've seen x > 1, then emit 2x
     (s, x) => if x > 1 then true else s // change state upon seeing x > 1
@@ -65,7 +65,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.Monomial.{Interface, Store}
 
 def moore[Y]: Moore[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] =
-  Moore[Boolean, Int, Int => Int, Y](
+  Moore(
     false,
     s => x => if s then x + x else x,   // if we've seen x > 1, then emit 2x
     (s, x) => if x > 1 then true else s // change state upon seeing x > 1
@@ -109,16 +109,15 @@ val w: Wiring[ω] = Wiring(
   b => a => b._2(a),
   (b, a) => ((a, b._2), b._2(a))
 )
-// w: Wiring[ω] = dynamical.fsm.methods.polymap.asWiring$$anon$6@10c31863
+// w: Wiring[ω] = dynamical.fsm.methods.polymap.asWiring$$anon$10@4ec1b220
 
-val m: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
-  (Moore[Char, (Byte, Byte => Char), Char, Nothing](" ".charAt(0), identity, (s, i) => i._2(i._1))
-    ⊗ Moore[Byte => Char, Char, Byte => Char, Nothing](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
-// m: Moore[~>[⊗[[_$5 >: Nothing <: Any] =>> Store[Char, _$5], [_$6 >: Nothing <: Any] =>> Store[Function1[Byte, Char], _$6]], ⊗[Plant, Controller]]] = dynamical.fsm.methods.moore.product.tensor$$anon$1@127e7f48
+def m[Y]: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
+  (Moore[Char, (Byte, Byte => Char), Char, Y](" ".charAt(0), identity, (s, i) => i._2(i._1))
+    ⊗ Moore[Byte => Char, Char, Byte => Char, Y](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
 
 val fsm: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] =
   m.andThen(w).asMealy
-// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] =>> Store[Char, _$7], [_$8 >: Nothing <: Any] =>> Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.methods.moore.conversions.asMealy$$anon$3@34d91bf4
+// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] =>> Store[Char, _$7], [_$8 >: Nothing <: Any] =>> Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.methods.moore.conversions.asMealy$$anon$7@53019d36
 
 val input = "hello world".getBytes().toList
 // input: List[Byte] = List(
@@ -152,7 +151,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.Monomial.{Interface, Store}
 
 val m: Mealy[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
-// m: Mealy[~>[[_$9 >: Nothing <: Any] =>> Store[Boolean, _$9], [_$10 >: Nothing <: Any] =>> Interface[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.methods.polymap.asMealy$$anon$1@34712f58
+// m: Mealy[~>[[_$9 >: Nothing <: Any] =>> Store[Boolean, _$9], [_$10 >: Nothing <: Any] =>> Interface[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.methods.polymap.asMealy$$anon$1@37ba59e6
 
 val l: List[Int] = Stream(1, 2, 3).through(m.transducer).compile.toList
 // l: List[Int] = List(2, 4, 6)
