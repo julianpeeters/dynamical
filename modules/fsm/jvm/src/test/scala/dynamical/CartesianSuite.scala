@@ -82,15 +82,15 @@ class CartesianSuite extends FunSuite:
     assertEquals(obtained, expected)
 
   test("mealy linearly distributive"):
-    type P[Y] = Interface[Int, Int, Y]
-    type Q[Y] = Interface[String, String, Y]
-    type R[Y] = Interface[Boolean, Boolean, Y]
+    type P[Y] = Interface[Int, Double, Y]
+    type Q[Y] = Interface[String, Char, Y]
+    type R[Y] = Interface[Boolean, Unit, Y]
     type S[Y] = Store[String, Y]
-    type T[Y] = Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Int, (String, Boolean)), Y]
+    type T[Y] = Interface[Either[Int, (String, Boolean)], Either[Int, (String, Boolean)] => (Double, (Char, Unit)), Y]
     val n: Moore[S ~> ((P × Q) ⊗ R)] =
       Moore(
         i = "",
-        r = s => ((s.length, s), s.length >= 2),
+        r = s => ((s.length, s.headOption.getOrElse('!')), ()),
         u = (s, a) => if a._2 then s else a._1 match
           case Left(value) => value.toString
           case Right(value) => s + value,
@@ -99,11 +99,11 @@ class CartesianSuite extends FunSuite:
       Wiring(
         b => (b._1._1, (b._1._2, b._2)),                  // re-tuple,
         (b, a) => a match                                 // exhibit strength:
-          case Left(value) => (Left(value), b._2)         //   A1 => (A1, A3)
-          case Right(value) => (Right(b._1._2), value._2) //   (A2, A3) => (A2, A3)
+          case Left(value) => (Left(value), value < 1)
+          case Right(value) => (Right(b._1._2+:value._1), value._2)
       )
     val z: Wiring[(P × (Q ⊗ R)) ~> T] = Wiring(b => a => b, (b, a) => a)
     val m: Mealy[((S ~> ((P × Q) ⊗ R)) ~> (P × (Q ⊗ R))) ~> T] = n.andThen(w).andThen(z).asMealy
-    val obtained: List[(Int, (String, Boolean))] = List(Right(("foo", true)), Left(2), Right(("bar", false))).mapAccumulate(m.init)(m.run)._2
-    val expected: List[(Int, (String, Boolean))] = List((0, ("", false)), (0, ("", false)), (1, ("2", false)))
+    val obtained: List[(Double, (Char, Unit))] = List(Right(("foo", true)), Left(2), Right(("bar", false))).mapAccumulate(m.init)(m.run)._2
+    val expected: List[(Double, (Char, Unit))] = List((0, ('!', ())), (0, ('!', ())), (1, ('2', ())))
     assertEquals(obtained, expected)
