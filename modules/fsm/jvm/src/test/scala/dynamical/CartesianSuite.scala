@@ -97,10 +97,10 @@ class CartesianSuite extends FunSuite:
       )
     val w: Wiring[((P × Q) ⊗ R) ~> (P × (Q ⊗ R))] =
       Wiring(
-        b => (b._1._1, (b._1._2, b._2)), // re-tuple
-        (b, a) => a match                // exhibit strength
-          case Left(value) => (Left(value), b._2)
-          case Right(value) => (Right(b._1._2), value._2)
+        b => (b._1._1, (b._1._2, b._2)),                  // re-tuple,
+        (b, a) => a match                                 // exhibit strength:
+          case Left(value) => (Left(value), b._2)         //   A1 => (A1, A3)
+          case Right(value) => (Right(b._1._2), value._2) //   (A2, A3) => (A2, A3)
       )
     val z: Wiring[(P × (Q ⊗ R)) ~> T] = Wiring(b => a => b, (b, a) => a)
     val m: Mealy[((S ~> ((P × Q) ⊗ R)) ~> (P × (Q ⊗ R))) ~> T] = n.andThen(w).andThen(z).asMealy
