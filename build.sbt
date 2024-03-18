@@ -1,7 +1,6 @@
-val CatsV = "2.10.0"
 val Fs2V = "3.9.3"
 val MUnitV = "0.7.29"
-val PolynomialV = "0.5.0+3-6fb0ba15+20240303-1456-SNAPSHOT"
+val PolynomialV = "0.5.0+6-e451a604+20240318-1509-SNAPSHOT"
 
 inThisBuild(List(
   crossScalaVersions := Seq(scalaVersion.value),
@@ -56,7 +55,6 @@ lazy val fsm = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     name := "dynamical-fsm",
     libraryDependencies ++= Seq(
       "com.julianpeeters" %%% "polynomial"   % PolynomialV,
-      "org.typelevel"     %%% "cats-core"    % CatsV,
       "org.scalameta"      %% "munit"        % MUnitV         % Test
     )
   )
