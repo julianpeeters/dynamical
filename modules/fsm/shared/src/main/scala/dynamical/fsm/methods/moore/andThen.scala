@@ -1,12 +1,12 @@
 package dynamical.fsm.methods.moore
 
-import cats.Id
+import cats.{Id, Monad}
 import dynamical.fsm.{Moore, Wiring}
 import dynamical.fsm.methods.polymap.asMoore.asMoore
 import dynamical.fsm.methods.wiring.asPolyMap.asPolyMap
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
-import polynomial.`object`.Monomial.{Interface, Store}
+import polynomial.`object`.Monomial.{Interface, Store, StoreF}
 import polynomial.product.{×, ⊗}
 
 object andThen:
@@ -25,6 +25,15 @@ object andThen:
     def andThen(
       w: Wiring[Interface[A, Id[B], _] ~> Interface[A, A => Option[B], _]]
     ): Moore[Store[Option[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Option[B], _]] =
+      m.asPolyMap
+       .andThen(w.asPolyMap)
+       .asMoore(m.init)
+
+  extension [F[_]: Monad, S, A, B] (m: Moore[StoreF[F, S, _] ~> Interface[A, F[B], _]])
+    @scala.annotation.targetName("andThenFStoreMonoToMonoF")
+    def andThen(
+      w: Wiring[Interface[A, F[B], _] ~> Interface[A, A => F[B], _]]
+    ): Moore[StoreF[F, S, _] ~> Interface[A, F[B], _] ~> Interface[A, A => F[B], _]] =
       m.asPolyMap
        .andThen(w.asPolyMap)
        .asMoore(m.init)

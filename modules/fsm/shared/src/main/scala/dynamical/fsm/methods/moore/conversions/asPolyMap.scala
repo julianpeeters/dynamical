@@ -4,7 +4,7 @@ import cats.Id
 import dynamical.fsm.Moore
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
-import polynomial.`object`.Monomial.{Interface, Store}
+import polynomial.`object`.Monomial.{Interface, Store, StoreF}
 import polynomial.product.{×, ⊗}
 
 object asPolyMap:
@@ -13,6 +13,11 @@ object asPolyMap:
     @scala.annotation.targetName("asPolyMapStoreToMono")
     def asPolyMap: PolyMap[Store[S, _], Interface[A, B, _], Y] =
       PolyMap(m.readout, m.update)   
+
+  extension [F[_], S, A, B, Y] (m: Moore[StoreF[F, S, _] ~> Interface[A, F[B], _]])
+    @scala.annotation.targetName("asPolyMapInterfaceTF[S], oMono")
+    def asPolyMap: PolyMap[StoreF[F, S, _], Interface[A, F[B], _], Y] =
+      PolyMap(m.readout, m.update)
 
   extension [S, A1, B1, A2, B2, Y] (m: Moore[Store[S, _] ~> BiInterface[A1, B1, A2, B2, _]])
     @scala.annotation.targetName("asPolyMapStoreToBi")

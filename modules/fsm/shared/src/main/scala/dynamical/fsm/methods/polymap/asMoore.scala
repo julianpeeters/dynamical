@@ -5,7 +5,7 @@ import dynamical.fsm.methods.types.{Init, Readout, Update}
 import dynamical.fsm.Moore
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
-import polynomial.`object`.Monomial.{Interface, Store}
+import polynomial.`object`.Monomial.{Interface, Store, StoreF}
 import polynomial.product.{×, ◁, ⊗}
 
 object asMoore:
@@ -19,6 +19,17 @@ object asMoore:
         def readout[Y]: Readout[Store[Id[S], _] ~> Interface[A, Id[B], _], Y] =
           p.φ
         def update[Y]: Update[Store[Id[S], _] ~> Interface[A, Id[B], _], Y] =
+          p.`φ#`
+
+  extension [F[_], S, A, B, Y] (p: PolyMap[StoreF[F, S, _], Interface[A, F[B], _], Y])
+    @scala.annotation.targetName("asMooreFStoreToMono")
+    def asMoore(i: S): Moore[StoreF[F, S, _] ~> Interface[A, F[B], _]] =
+      new Moore[StoreF[F, S, _] ~> Interface[A, F[B], _]]:
+        def init[Y]: Init[StoreF[F, S, _] ~> Interface[A, F[B], _], Y] =
+          i
+        def readout[Y]: Readout[StoreF[F, S, _] ~> Interface[A, F[B], _], Y] =
+          p.φ
+        def update[Y]: Update[StoreF[F, S, _] ~> Interface[A, F[B], _], Y] =
           p.`φ#`
 
   extension [S, A1, B1, A2, B2, Y] (p: PolyMap[Store[S, _], BiInterface[A1, B1, A2, B2, _], Y])
@@ -43,7 +54,6 @@ object asMoore:
         def update[Y]: Update[Store[Id[S], _] ~> Interface[A, Id[B], _] ~> Interface[C, C => Id[D], _], Y] =
           p.`φ#`
 
-  
   extension [S, A, B, Y] (p: PolyMap[PolyMap[Store[Option[S], _], Interface[A, Id[B], _], _], Interface[A, A => Option[B], _], Y])
     @scala.annotation.targetName("asMooreStoreToMonoToMonoPrism")
     def asMoore(i: Option[S]): Moore[Store[Option[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Option[B], _]] =
@@ -53,6 +63,17 @@ object asMoore:
         def readout[Y]: Readout[Store[Option[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Option[B], _], Y] =
           p.φ
         def update[Y]: Update[Store[Option[S], _] ~> Interface[A, Id[B], _] ~> Interface[A, A => Option[B], _], Y] =
+          p.`φ#`
+
+  extension [F[_], S, A, B, Y] (p: PolyMap[PolyMap[StoreF[F, S, _], Interface[A, F[B], _], _], Interface[A, A => F[B], _], Y])
+    @scala.annotation.targetName("asMooreStoreToMonoToMonoPrism")
+    def asMoore(i: S): Moore[StoreF[F, S, _] ~> Interface[A, F[B], _] ~> Interface[A, A => F[B], _]] =
+      new Moore[(StoreF[F, S, _] ~> Interface[A, F[B], _]) ~> Interface[A, A => F[B], _]]:
+        def init[Y]: Init[(StoreF[F, S, _] ~> Interface[A, F[B], _]) ~> Interface[A, A => F[B], _], Y] =
+          i
+        def readout[Y]: Readout[(StoreF[F, S, _] ~> Interface[A, F[B], _]) ~> Interface[A, A => F[B], _], Y] =
+          p.φ
+        def update[Y]: Update[(StoreF[F, S, _] ~> Interface[A, F[B], _]) ~> Interface[A, A => F[B], _], Y] =
           p.`φ#`
 
   extension [S1, S2, A1, B1, A2, B2, Y] (p: PolyMap[PolyMap[Store[(S1, S2), _], Interface[(A1, A2), (B1, B2), _], _ ], Interface[(A1, A2), (A1 => B1, A2 => B2), _], Y ])

@@ -1,6 +1,8 @@
+val CatsEffectV = "3.5.4"
 val Fs2V = "3.9.3"
 val MUnitV = "0.7.29"
-val PolynomialV = "0.5.0+6-e451a604+20240318-1509-SNAPSHOT"
+val MUnitCEV = "1.0.7"
+val PolynomialV = "0.5.0+7-d5de9b99+20240321-1200-SNAPSHOT"
 
 inThisBuild(List(
   crossScalaVersions := Seq(scalaVersion.value),
@@ -41,8 +43,9 @@ lazy val fs2 = crossProject(JSPlatform, JVMPlatform, NativePlatform)
   .settings(
     name := "dynamical-fs2",
     libraryDependencies ++= Seq(
-      "co.fs2"         %%% "fs2-core" % Fs2V,
-      "org.scalameta"   %% "munit"    % MUnitV % Test,
+      "co.fs2"         %%% "fs2-core"            % Fs2V,
+      "org.scalameta"   %% "munit"               % MUnitV   % Test,
+      "org.typelevel"   %% "munit-cats-effect-3" % MUnitCEV % Test,
     )
   )
   .dependsOn(fsm)
@@ -55,7 +58,8 @@ lazy val fsm = crossProject(JSPlatform, JVMPlatform, NativePlatform)
     name := "dynamical-fsm",
     libraryDependencies ++= Seq(
       "com.julianpeeters" %%% "polynomial"   % PolynomialV,
-      "org.scalameta"      %% "munit"        % MUnitV         % Test
+      "org.typelevel"     %%% "cats-effect"  % CatsEffectV,
+      "org.scalameta"      %% "munit"        % MUnitV       % Test
     )
   )
   .jsSettings(test := {})
