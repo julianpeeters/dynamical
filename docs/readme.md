@@ -7,7 +7,7 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
 </figure>
 
 ### Modules
- - [`dynamical-fsm`](#dynamical-fsm): composable finite state machines
+ - [`dynamical-fsm`](#dynamical-fsm): compositional finite state machines
  - [`dynamical-fs2`](#dynamical-fs2): integration with [fs2](https://fs2.io/#/) streams
 
 ## `dynamical-fsm`
