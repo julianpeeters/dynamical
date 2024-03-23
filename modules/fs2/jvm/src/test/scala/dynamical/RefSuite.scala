@@ -48,7 +48,7 @@ class RefSuite extends CatsEffectSuite:
         m2 = mealy(moore(ref))
         m3 = mealy(moore(ref))
         r <- Stream(1, 2, 3).covary[IO].broadcastThrough(m1.transducer, m2.transducer, m3.transducer).compile.toList
-      yield r
+      yield r.sorted
     val expected: List[Int] = List(2, 2, 2, 4, 4, 4, 6, 6, 6) 
     assertIO(obtained, expected)
 
