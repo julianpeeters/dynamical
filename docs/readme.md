@@ -3,7 +3,7 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
 
 <figure>
   <img src="IMAGE.jpg" alt="A mermaid.js chart depicting a wiring diagram." width=50% height=50%>
-  <figcaption style="text-align: justify;">A wiring diagram: &nbsp; <span style="font-family:Courier">Plant</span> ⊗ <span style="font-family:Courier">Controller</span> → <span style="font-family:Courier">System</span></figcaption>
+  <figcaption style="text-align: justify;">A wiring diagram: &nbsp; `<span style="font-family:Courier">Plant</span> ⊗ <span style="font-family:Courier">Controller</span> → <span style="font-family:Courier">System</span>`</figcaption>
 </figure>
 
 ### Modules
@@ -40,7 +40,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.Monomial.{Interface, Store}
 
 def mealified[Y]: Moore[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] =
-  Moore[Boolean, Int, Int => Int, Y](
+  Moore(
     false,
     s => x => if s then x + x else x,   // if we've seen x > 1, then emit 2x
     (s, x) => if x > 1 then true else s // change state upon seeing x > 1
@@ -64,7 +64,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.Monomial.{Interface, Store}
 
 def moore[Y]: Moore[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] =
-  Moore[Boolean, Int, Int => Int, Y](
+  Moore(
     false,
     s => x => if s then x + x else x,   // if we've seen x > 1, then emit 2x
     (s, x) => if x > 1 then true else s // change state upon seeing x > 1
@@ -109,9 +109,9 @@ val w: Wiring[ω] = Wiring(
   (b, a) => ((a, b._2), b._2(a))
 )
 
-val m: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
-  (Moore[Char, (Byte, Byte => Char), Char, Nothing](" ".charAt(0), identity, (s, i) => i._2(i._1))
-    ⊗ Moore[Byte => Char, Char, Byte => Char, Nothing](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
+def m[Y]: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
+  (Moore[Char, (Byte, Byte => Char), Char, Y](" ".charAt(0), identity, (s, i) => i._2(i._1))
+    ⊗ Moore[Byte => Char, Char, Byte => Char, Y](b => b.toChar, identity, (f, i) => if i != ' ' then f else b => b.toChar.toUpper))
 
 val fsm: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] =
   m.andThen(w).asMealy

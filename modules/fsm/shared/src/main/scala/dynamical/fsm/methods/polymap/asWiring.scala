@@ -5,7 +5,7 @@ import dynamical.fsm.Wiring
 import polynomial.morphism.{PolyMap, ~>}
 import polynomial.`object`.Binomial.BiInterface
 import polynomial.`object`.Monomial.Interface
-import polynomial.product.⊗
+import polynomial.product.{×, ⊗}
 
 object asWiring:
 
@@ -36,14 +36,42 @@ object asWiring:
         def `f#`[Y]: Update[BiInterface[A1, B1, A2, B2, _] ~> BiInterface[A1, A1 => B1, A2, A2 => B2, _], Y] =
           p.`φ#`
 
-  // extension [A, B, Y] (p: PolyMap[(Interface[A, B, _] ⊗ Interface[A, B, _]), Interface[A, A => B, _], Y])
-  //   @scala.annotation.targetName("asWiringMonoMonoTensored1")
-  //   def asWiring: Wiring[(Interface[A, B, _] ⊗ Interface[A, B, _]) ~> Interface[A, A => B, _]] =
-  //     new Wiring[(Interface[A, B, _] ⊗ Interface[A, B, _]) ~> Interface[A, A => B, _]]:
-  //       def `f₁`[Y]: Readout[(Interface[A, B, _] ⊗ Interface[A, B, _]) ~> Interface[A, A => B, _], Y] =
-  //         p.φ
-  //       def `f#`[Y]: Update[(Interface[A, B, _] ⊗ Interface[A, B, _]) ~> Interface[A, A => B, _], Y] =
-  //         p.`φ#`
+  extension [A1, B1, A2, B2, Y] (p: PolyMap[(Interface[A1, B1, _] × Interface[A2, B2, _]), Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y])
+    @scala.annotation.targetName("asWiringMonoMonoCartesian")
+    def asWiring: Wiring[(Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]] =
+      new Wiring[(Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _]]:
+        def `f₁`[Y]: Readout[(Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
+          p.φ
+        def `f#`[Y]: Update[(Interface[A1, B1, _] × Interface[A2, B2, _]) ~> Interface[Either[A1, A2], Either[A1, A2] => (B1, B2), _], Y] =
+          p.`φ#`
+
+  extension [A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y])
+    @scala.annotation.targetName("asWiringMonoMonoCartesianMonoTensored")
+    def asWiring: Wiring[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]] =
+      new Wiring[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _]]:
+        def `f₁`[Y]: Readout[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+          p.φ
+        def `f#`[Y]: Update[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> Interface[(Either[A1, A2], A3), ((Either[A1, A2], A3)) => ((B1, B2), B3), _], Y] =
+          p.`φ#`
+
+  extension [A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _], Y])
+    @scala.annotation.targetName("asWiringMonoMonoTensoredMonoCartesian")
+    def asWiring: Wiring[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _]] =
+      new Wiring[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _]]:
+        def `f₁`[Y]: Readout[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _], Y] =
+          p.φ
+        def `f#`[Y]: Update[(Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])) ~> Interface[Either[A1, (A2, A3)], Either[A1, (A2, A3)] => (B1, (B2, B3)), _], Y] =
+          p.`φ#`
+
+
+  extension [A1, B1, A2, B2, A3, B3, Y] (p: PolyMap[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]), (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y])
+    @scala.annotation.targetName("asWiringMonoMonoTensoredMonoCartesianToCartesianMonoTensored")
+    def asWiring: Wiring[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))] =
+      new Wiring[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _]))]:
+        def `f₁`[Y]: Readout[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
+          p.φ
+        def `f#`[Y]: Update[((Interface[A1, B1, _] × Interface[A2, B2, _]) ⊗ Interface[A3, B3, _]) ~> (Interface[A1, B1, _] × (Interface[A2, B2, _] ⊗ Interface[A3, B3, _])), Y] =
+          p.`φ#`
 
   extension [A1, B1, A2, B2, Y] (p: PolyMap[(Interface[A1, B1, _] ⊗ Interface[A2, B2, _]), Interface[A1, A1 => B2, _], Y])
     @scala.annotation.targetName("asWiringMonoMonoTensored2")
@@ -62,7 +90,6 @@ object asWiring:
           p.φ
         def `f#`[Y]: Update[(Interface[A1, B1, _] ⊗ Interface[A2, B2, _] ⊗ Interface[A3, B3, _]) ~> Interface[I, I => O, _], Y] =
           p.`φ#`
-
 
   extension [A, B, C, Y] (p: PolyMap[(Interface[(A, B), C, _] ⊗ Interface[C, B, _]), Interface[A, A => C, _], Y])
     @scala.annotation.targetName("asWiringMonoMonoTensored4")
