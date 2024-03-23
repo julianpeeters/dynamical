@@ -14,7 +14,7 @@ Based on the dependent lenses described in [Niu and Spivak](https://topos.site/p
  - libarary for Scala 3.4+ (JS, JVM, and Native platforms)
  
 ```scala
-"com.julianpeeters" %% "dynamical-fsm" % "0.5.0"
+"com.julianpeeters" %% "dynamical-fsm" % "0.6.0"
 ```
 
 ##### `Moore[P[_]]`
@@ -109,7 +109,7 @@ val w: Wiring[ω] = Wiring(
   b => a => b._2(a),
   (b, a) => ((a, b._2), b._2(a))
 )
-// w: Wiring[ω] = dynamical.fsm.methods.polymap.asWiring$$anon$10@4ec1b220
+// w: Wiring[ω] = dynamical.fsm.methods.polymap.asWiring$$anon$10@5857f9
 
 def m[Y]: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller)] =
   (Moore[Char, (Byte, Byte => Char), Char, Y](" ".charAt(0), identity, (s, i) => i._2(i._1))
@@ -117,7 +117,7 @@ def m[Y]: Moore[(Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Contro
 
 val fsm: Mealy[((Store[Char, _] ⊗ Store[Byte => Char, _]) ~> (Plant ⊗ Controller) ~> System)] =
   m.andThen(w).asMealy
-// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] =>> Store[Char, _$7], [_$8 >: Nothing <: Any] =>> Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.methods.moore.conversions.asMealy$$anon$7@53019d36
+// fsm: Mealy[~>[~>[⊗[[_$7 >: Nothing <: Any] =>> Store[Char, _$7], [_$8 >: Nothing <: Any] =>> Store[Function1[Byte, Char], _$8]], ⊗[Plant, Controller]], System]] = dynamical.fsm.methods.moore.conversions.asMealy$$anon$8@2da2c5d7
 
 val input = "hello world".getBytes().toList
 // input: List[Byte] = List(
@@ -137,7 +137,7 @@ val result: String = input.mapAccumulate(fsm.init)(fsm.run)._2.mkString
  - depends on fs2 3.9
  
 ```scala
-"com.julianpeeters" %% "dynamical-fs2" % "0.5.0"
+"com.julianpeeters" %% "dynamical-fs2" % "0.6.0"
 ```
 
 The `dynamical-fs2` library provides fs2 integration, in the form of a stream
@@ -151,7 +151,7 @@ import polynomial.morphism.~>
 import polynomial.`object`.Monomial.{Interface, Store}
 
 val m: Mealy[Store[Boolean, _] ~> Interface[Int, Int => Int, _]] = Mealy(false, s => i => i + i, (s, i) => s)
-// m: Mealy[~>[[_$9 >: Nothing <: Any] =>> Store[Boolean, _$9], [_$10 >: Nothing <: Any] =>> Interface[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.methods.polymap.asMealy$$anon$1@37ba59e6
+// m: Mealy[~>[[_$9 >: Nothing <: Any] =>> Store[Boolean, _$9], [_$10 >: Nothing <: Any] =>> Interface[Int, Function1[Int, Int], _$10]]] = dynamical.fsm.methods.polymap.asMealy$$anon$1@5251f58a
 
 val l: List[Int] = Stream(1, 2, 3).through(m.transducer).compile.toList
 // l: List[Int] = List(2, 4, 6)
