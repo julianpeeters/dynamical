@@ -2,7 +2,7 @@ val CatsEffectV = "3.5.4"
 val Fs2V = "3.9.3"
 val MUnitV = "0.7.29"
 val MUnitCEV = "1.0.7"
-val PolynomialV = "0.5.0+7-d5de9b99+20240321-1200-SNAPSHOT"
+val PolynomialV = "0.6.0"
 
 inThisBuild(List(
   crossScalaVersions := Seq(scalaVersion.value),
@@ -26,7 +26,7 @@ inThisBuild(List(
     "-Wvalue-discard",
     "-Ykind-projector:underscores"
   ),
-  scalaVersion := "3.4.1-RC1",
+  scalaVersion := "3.4.0",
   versionScheme := Some("semver-spec"),
 ))
 
